@@ -19,10 +19,6 @@ jobs:
     env:
       ELECTRON_SKIP_BINARY_DOWNLOAD: '1'
       CSC_IDENTITY_AUTO_DISCOVERY: 'false'
-      TC_TOOLING_DIR: ${{ runner.temp }}/lbot-tooling
-      LLAMA_SOURCE_DIR: ${{ runner.temp }}/llama.cpp
-      WHISPER_SOURCE_DIR: ${{ runner.temp }}/whisper.cpp
-      TC_RELEASE_LOG_DIR: ${{ github.workspace }}/.release-logs
       CMAKE_BUILD_PARALLEL_LEVEL: '2'
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
@@ -30,6 +26,12 @@ jobs:
         with:
           node-version: '24'
           cache: npm
+      - name: Configure writable build directories
+        run: |
+          printf 'TC_TOOLING_DIR=%s\n' "$RUNNER_TEMP/lbot-tooling" >> "$GITHUB_ENV"
+          printf 'LLAMA_SOURCE_DIR=%s\n' "$RUNNER_TEMP/llama.cpp" >> "$GITHUB_ENV"
+          printf 'WHISPER_SOURCE_DIR=%s\n' "$RUNNER_TEMP/whisper.cpp" >> "$GITHUB_ENV"
+          printf 'TC_RELEASE_LOG_DIR=%s\n' "$GITHUB_WORKSPACE/.release-logs" >> "$GITHUB_ENV"
       - name: Install and validate source
         run: |
           set -euo pipefail
