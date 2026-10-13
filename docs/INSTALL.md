@@ -1,5 +1,7 @@
 # L-BOT 安装教程
 
+主作者：**Hebe**；赞助商：**Zijie**。
+
 本文面向 `0.2.0` 开发验收版本。仓库为 [nana7m1773/TC](https://github.com/nana7m1773/TC)，应用名为 **L-BOT**。Windows 安装器未签名，Android APK 使用调试签名；安装包构建通过不代表目标设备已经运行验收。
 
 ## 取得文件与校验

@@ -2000,7 +2000,7 @@ export default function App() {
             <ShieldCheck size={13} />
             明确授权 · 隔离记忆 · 随时接管
           </span>
-          <span>独立基础版 · 平台接入与实机性能见验收记录</span>
+          <span>Hebe · 主作者 ｜ Zijie · 赞助商</span>
         </footer>
       </main>
     </div>
