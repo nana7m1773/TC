@@ -1,0 +1,404 @@
+{
+  "date": "2026-10-13T05:22:20.769Z",
+  "transport": "simulation",
+  "generator": "fixture (fixed test replies; no AI inference)",
+  "realPlatformConnection": false,
+  "virtualClock": true,
+  "contextModelCalled": false,
+  "checks": {
+    "fivePlatformsReplied": true,
+    "duplicateEventReplies": 0,
+    "sentBeforeDeadline": 0,
+    "lateReprocessingDuplicates": 0
+  },
+  "platforms": [
+    {
+      "platform": "QQ",
+      "receivedMessage": "周末一起吃个饭？",
+      "reply": "收到你的消息啦，我先看看，稍后回复你。",
+      "delayMs": 5000,
+      "receipt": "simulation-receipt:1"
+    },
+    {
+      "platform": "微信",
+      "receivedMessage": "最近忙吗？有空聊聊。",
+      "reply": "收到你的消息啦，我先看看，稍后回复你。",
+      "delayMs": 5000,
+      "receipt": "simulation-receipt:2"
+    },
+    {
+      "platform": "哔哩哔哩私信",
+      "receivedMessage": "你分享的视频很有意思，谢谢！",
+      "reply": "收到你的消息啦，我先看看，稍后回复你。",
+      "delayMs": 5000,
+      "receipt": "simulation-receipt:3"
+    },
+    {
+      "platform": "微博私信",
+      "receivedMessage": "看到你发的照片了，拍得很好。",
+      "reply": "收到你的消息啦，我先看看，稍后回复你。",
+      "delayMs": 5000,
+      "receipt": "simulation-receipt:4"
+    },
+    {
+      "platform": "WhatsApp",
+      "receivedMessage": "Hi! Are you free to chat this weekend?",
+      "reply": "Thanks for your message. I will check and get back to you.",
+      "delayMs": 5000,
+      "receipt": "simulation-receipt:5"
+    }
+  ],
+  "events": [
+    {
+      "id": "simulation-event:1",
+      "at": 1000000,
+      "kind": "config_changed",
+      "platform": "qq",
+      "messageIds": [],
+      "reasons": [],
+      "detail": "模拟规则已修改，旧草稿失效。"
+    },
+    {
+      "id": "simulation-event:2",
+      "at": 1000000,
+      "kind": "received",
+      "platform": "qq",
+      "messageIds": [
+        "same-platform-scoped-id"
+      ],
+      "reasons": [],
+      "detail": "内存模拟收到消息。"
+    },
+    {
+      "id": "simulation-event:3",
+      "at": 1000000,
+      "kind": "duplicate",
+      "platform": "qq",
+      "messageIds": [
+        "same-platform-scoped-id"
+      ],
+      "reasons": [],
+      "detail": "同一模拟会话事件重复，已忽略。"
+    },
+    {
+      "id": "simulation-event:4",
+      "at": 1000000,
+      "kind": "config_changed",
+      "platform": "wechat",
+      "messageIds": [],
+      "reasons": [],
+      "detail": "模拟规则已修改，旧草稿失效。"
+    },
+    {
+      "id": "simulation-event:5",
+      "at": 1000000,
+      "kind": "received",
+      "platform": "wechat",
+      "messageIds": [
+        "same-platform-scoped-id"
+      ],
+      "reasons": [],
+      "detail": "内存模拟收到消息。"
+    },
+    {
+      "id": "simulation-event:6",
+      "at": 1000000,
+      "kind": "duplicate",
+      "platform": "wechat",
+      "messageIds": [
+        "same-platform-scoped-id"
+      ],
+      "reasons": [],
+      "detail": "同一模拟会话事件重复，已忽略。"
+    },
+    {
+      "id": "simulation-event:7",
+      "at": 1000000,
+      "kind": "config_changed",
+      "platform": "bilibili",
+      "messageIds": [],
+      "reasons": [],
+      "detail": "模拟规则已修改，旧草稿失效。"
+    },
+    {
+      "id": "simulation-event:8",
+      "at": 1000000,
+      "kind": "received",
+      "platform": "bilibili",
+      "messageIds": [
+        "same-platform-scoped-id"
+      ],
+      "reasons": [],
+      "detail": "内存模拟收到消息。"
+    },
+    {
+      "id": "simulation-event:9",
+      "at": 1000000,
+      "kind": "duplicate",
+      "platform": "bilibili",
+      "messageIds": [
+        "same-platform-scoped-id"
+      ],
+      "reasons": [],
+      "detail": "同一模拟会话事件重复，已忽略。"
+    },
+    {
+      "id": "simulation-event:10",
+      "at": 1000000,
+      "kind": "config_changed",
+      "platform": "weibo",
+      "messageIds": [],
+      "reasons": [],
+      "detail": "模拟规则已修改，旧草稿失效。"
+    },
+    {
+      "id": "simulation-event:11",
+      "at": 1000000,
+      "kind": "received",
+      "platform": "weibo",
+      "messageIds": [
+        "same-platform-scoped-id"
+      ],
+      "reasons": [],
+      "detail": "内存模拟收到消息。"
+    },
+    {
+      "id": "simulation-event:12",
+      "at": 1000000,
+      "kind": "duplicate",
+      "platform": "weibo",
+      "messageIds": [
+        "same-platform-scoped-id"
+      ],
+      "reasons": [],
+      "detail": "同一模拟会话事件重复，已忽略。"
+    },
+    {
+      "id": "simulation-event:13",
+      "at": 1000000,
+      "kind": "config_changed",
+      "platform": "whatsapp",
+      "messageIds": [],
+      "reasons": [],
+      "detail": "模拟规则已修改，旧草稿失效。"
+    },
+    {
+      "id": "simulation-event:14",
+      "at": 1000000,
+      "kind": "received",
+      "platform": "whatsapp",
+      "messageIds": [
+        "same-platform-scoped-id"
+      ],
+      "reasons": [],
+      "detail": "内存模拟收到消息。"
+    },
+    {
+      "id": "simulation-event:15",
+      "at": 1000000,
+      "kind": "duplicate",
+      "platform": "whatsapp",
+      "messageIds": [
+        "same-platform-scoped-id"
+      ],
+      "reasons": [],
+      "detail": "同一模拟会话事件重复，已忽略。"
+    },
+    {
+      "id": "simulation-event:16",
+      "at": 1000000,
+      "kind": "generated",
+      "platform": "qq",
+      "messageIds": [
+        "same-platform-scoped-id"
+      ],
+      "reasons": [],
+      "detail": "固定测试生成器已产生回复；未调用 AI。",
+      "draftId": "draft:1000000:1"
+    },
+    {
+      "id": "simulation-event:17",
+      "at": 1000000,
+      "kind": "waiting",
+      "platform": "qq",
+      "messageIds": [
+        "same-platform-scoped-id"
+      ],
+      "reasons": [
+        "reply_delay"
+      ],
+      "detail": "等待设定的回复间隔；尚未发送。",
+      "draftId": "draft:1000000:1",
+      "dueAt": 1005000
+    },
+    {
+      "id": "simulation-event:18",
+      "at": 1000000,
+      "kind": "generated",
+      "platform": "wechat",
+      "messageIds": [
+        "same-platform-scoped-id"
+      ],
+      "reasons": [],
+      "detail": "固定测试生成器已产生回复；未调用 AI。",
+      "draftId": "draft:1000000:2"
+    },
+    {
+      "id": "simulation-event:19",
+      "at": 1000000,
+      "kind": "waiting",
+      "platform": "wechat",
+      "messageIds": [
+        "same-platform-scoped-id"
+      ],
+      "reasons": [
+        "reply_delay"
+      ],
+      "detail": "等待设定的回复间隔；尚未发送。",
+      "draftId": "draft:1000000:2",
+      "dueAt": 1005000
+    },
+    {
+      "id": "simulation-event:20",
+      "at": 1000000,
+      "kind": "generated",
+      "platform": "bilibili",
+      "messageIds": [
+        "same-platform-scoped-id"
+      ],
+      "reasons": [],
+      "detail": "固定测试生成器已产生回复；未调用 AI。",
+      "draftId": "draft:1000000:3"
+    },
+    {
+      "id": "simulation-event:21",
+      "at": 1000000,
+      "kind": "waiting",
+      "platform": "bilibili",
+      "messageIds": [
+        "same-platform-scoped-id"
+      ],
+      "reasons": [
+        "reply_delay"
+      ],
+      "detail": "等待设定的回复间隔；尚未发送。",
+      "draftId": "draft:1000000:3",
+      "dueAt": 1005000
+    },
+    {
+      "id": "simulation-event:22",
+      "at": 1000000,
+      "kind": "generated",
+      "platform": "weibo",
+      "messageIds": [
+        "same-platform-scoped-id"
+      ],
+      "reasons": [],
+      "detail": "固定测试生成器已产生回复；未调用 AI。",
+      "draftId": "draft:1000000:4"
+    },
+    {
+      "id": "simulation-event:23",
+      "at": 1000000,
+      "kind": "waiting",
+      "platform": "weibo",
+      "messageIds": [
+        "same-platform-scoped-id"
+      ],
+      "reasons": [
+        "reply_delay"
+      ],
+      "detail": "等待设定的回复间隔；尚未发送。",
+      "draftId": "draft:1000000:4",
+      "dueAt": 1005000
+    },
+    {
+      "id": "simulation-event:24",
+      "at": 1000000,
+      "kind": "generated",
+      "platform": "whatsapp",
+      "messageIds": [
+        "same-platform-scoped-id"
+      ],
+      "reasons": [],
+      "detail": "固定测试生成器已产生回复；未调用 AI。",
+      "draftId": "draft:1000000:5"
+    },
+    {
+      "id": "simulation-event:25",
+      "at": 1000000,
+      "kind": "waiting",
+      "platform": "whatsapp",
+      "messageIds": [
+        "same-platform-scoped-id"
+      ],
+      "reasons": [
+        "reply_delay"
+      ],
+      "detail": "等待设定的回复间隔；尚未发送。",
+      "draftId": "draft:1000000:5",
+      "dueAt": 1005000
+    },
+    {
+      "id": "simulation-event:26",
+      "at": 1005000,
+      "kind": "sent",
+      "platform": "qq",
+      "messageIds": [
+        "same-platform-scoped-id"
+      ],
+      "reasons": [],
+      "detail": "内存模拟连接器已接受回复；没有向真实平台发送。",
+      "draftId": "draft:1000000:1"
+    },
+    {
+      "id": "simulation-event:27",
+      "at": 1005000,
+      "kind": "sent",
+      "platform": "wechat",
+      "messageIds": [
+        "same-platform-scoped-id"
+      ],
+      "reasons": [],
+      "detail": "内存模拟连接器已接受回复；没有向真实平台发送。",
+      "draftId": "draft:1000000:2"
+    },
+    {
+      "id": "simulation-event:28",
+      "at": 1005000,
+      "kind": "sent",
+      "platform": "bilibili",
+      "messageIds": [
+        "same-platform-scoped-id"
+      ],
+      "reasons": [],
+      "detail": "内存模拟连接器已接受回复；没有向真实平台发送。",
+      "draftId": "draft:1000000:3"
+    },
+    {
+      "id": "simulation-event:29",
+      "at": 1005000,
+      "kind": "sent",
+      "platform": "weibo",
+      "messageIds": [
+        "same-platform-scoped-id"
+      ],
+      "reasons": [],
+      "detail": "内存模拟连接器已接受回复；没有向真实平台发送。",
+      "draftId": "draft:1000000:4"
+    },
+    {
+      "id": "simulation-event:30",
+      "at": 1005000,
+      "kind": "sent",
+      "platform": "whatsapp",
+      "messageIds": [
+        "same-platform-scoped-id"
+      ],
+      "reasons": [],
+      "detail": "内存模拟连接器已接受回复；没有向真实平台发送。",
+      "draftId": "draft:1000000:5"
+    }
+  ],
+  "automaticLearning": false
+}

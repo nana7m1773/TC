@@ -1,0 +1,47 @@
+{
+  "verifiedAt": "2026-10-12T03:27:44.942Z",
+  "host": {
+    "platform": "linux",
+    "cpu": "AMD EPYC 9V45 96-Core Processor",
+    "logicalCpus": 4,
+    "totalMemoryBytes": 35743784960,
+    "availableMemoryBeforeBytes": 34498162688
+  },
+  "engine": {
+    "version": "b11429",
+    "commit": "d81235049384534c167caea52b85a694f6103d14",
+    "path": "/workspace/.cache/engines/linux-x64-native/llama-server",
+    "sha256": "0bce957dd00060869e282cef2b8bce556c86758800d0820d1dd85d160f461557",
+    "backend": "CPU native build for this host"
+  },
+  "model": {
+    "id": "qwen35-2b-hauhaucs-q4-k-m",
+    "sha256": "be3ccca13a9d1bc8b67165ea80bd103cd6151a37ad131183cc7ca388f78d9517",
+    "contextSize": 12800,
+    "nativeContextSize": 262144
+  },
+  "projector": {
+    "sha256": "a86ac75fbd9a11d1883c688969d88a11d3d24a729cc7e181833fd2e1b3865c9d",
+    "sizeBytes": 668226688
+  },
+  "input": {
+    "path": "/workspace/TC/artifacts/validation/vision-shapes.png",
+    "sha256": "075193fd2ffcc13c7c1521690705fbca2f65df4fac35eec2cc7c663d98ba34fa",
+    "groundTruth": "白色背景，左侧红色正方形，右侧蓝色正方形。图中没有文字。"
+  },
+  "result": {
+    "text": "好的，根据您提供的图片，我对图中物体的描述如下：\n\n- **颜色**：图中有两个物体，一个为红色，另一个为蓝色。\n- **形状**：两个物体均为正方形。\n- **左右位置**：\n    - 红色正方形位于图像左侧。\n    - 蓝色正方形位于图像右侧。",
+    "inputTokens": 297,
+    "outputTokens": 70,
+    "contextSize": 12800,
+    "processingLocation": "local",
+    "imageWidth": 512,
+    "imageHeight": 384
+  },
+  "elapsedMs": 64014,
+  "peakRssKiB": 2760332,
+  "limitations": [
+    "Linux 云机测试，不能替代 Windows 运行验证或 8 GB Android 实机验收。",
+    "未测试设备温度、30 分钟连续交互、后台恢复或真实平台联调。"
+  ]
+}

@@ -1,0 +1,50 @@
+{
+  "date": "2026-10-13",
+  "repository": "/workspace/TC",
+  "installScriptSha256": "82b6e78b078d62aaa27d2a107d3867c32097a24c029358f2c923fd1f31ca8780",
+  "installScriptExecuted": true,
+  "npmCi": {
+    "packages": 411,
+    "exitCode": 0
+  },
+  "productionBuild": "passed",
+  "moduleTests": {
+    "passed": 62,
+    "failed": 0,
+    "skipped": 0
+  },
+  "browserTests": {
+    "passed": 22,
+    "failed": 0
+  },
+  "startup": {
+    "httpResponse": "passed",
+    "existingUiFlowsPassed": 2,
+    "ownServiceStopped": true
+  },
+  "toolchain": {
+    "jdk": "21.0.8+9",
+    "gradle": "8.11.1",
+    "sdk": 35,
+    "ndk": "28.2.13676358",
+    "cmake": "3.22.1"
+  },
+  "savedDraftFields": [
+    "install_script",
+    "start_skill",
+    "network.allowed_domains"
+  ],
+  "additionalDomains": [
+    "api.deepseek.com",
+    "ark.cn-beijing.volces.com",
+    "dashscope.aliyuncs.com"
+  ],
+  "draftStatus": "saved",
+  "requiresPublish": true,
+  "published": false,
+  "freshTaskRestorationTested": false,
+  "limitations": [
+    "Linux Electron GUI binary download is skipped in headless setup; explicitly rebuild for GUI development.",
+    "Target device performance and real social platform/API credentials remain separate acceptance prerequisites."
+  ]
+}

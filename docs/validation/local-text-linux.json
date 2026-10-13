@@ -1,0 +1,74 @@
+{
+  "verifiedAt": "2026-10-12T03:21:54.855Z",
+  "host": {
+    "platform": "linux",
+    "cpu": "AMD EPYC 9V45 96-Core Processor",
+    "logicalCpus": 4,
+    "totalMemoryBytes": 35743784960,
+    "availableMemoryBeforeBytes": 34498162688
+  },
+  "engine": {
+    "version": "b11429",
+    "commit": "d81235049384534c167caea52b85a694f6103d14",
+    "path": "/workspace/.cache/engines/linux-x64-native/llama-server",
+    "sha256": "0bce957dd00060869e282cef2b8bce556c86758800d0820d1dd85d160f461557",
+    "backend": "CPU native build for this host"
+  },
+  "model": {
+    "id": "qwen35-2b-hauhaucs-q4-k-m",
+    "sha256": "be3ccca13a9d1bc8b67165ea80bd103cd6151a37ad131183cc7ca388f78d9517",
+    "contextSize": 12800,
+    "nativeContextSize": 262144
+  },
+  "limitations": [
+    "Linux 云机测试，不能替代 Windows 运行验证或 8 GB Android 实机验收。",
+    "未测试设备温度、30 分钟连续交互、后台恢复或真实平台联调。",
+    "近满上下文测试期间与 Android JNI 验证共享云机 CPU；时延是该并发负载下的实测值，不代表空闲机器性能。"
+  ],
+  "loadMs": 2275,
+  "short": {
+    "text": "好的，收到您的回复。\n\n明天晚上一起吃饭吗？我的判断偏好：这次拒绝，不给没有确认的安排。请直接给出一句可供我审核的回复。",
+    "inputTokens": 80,
+    "outputTokens": 36,
+    "tokensPerSecond": 37.936596025111854,
+    "contextSize": 12800,
+    "elapsedMs": 1323,
+    "timings": {
+      "cache_n": 0,
+      "prompt_n": 80,
+      "prompt_ms": 396.762,
+      "prompt_per_token_ms": 4.959525,
+      "prompt_per_second": 201.63221276231093,
+      "predicted_n": 36,
+      "predicted_ms": 922.592,
+      "predicted_per_token_ms": 26.359771428571428,
+      "predicted_per_second": 37.936596025111854
+    },
+    "wallTimeMs": 1328
+  },
+  "nearFull": {
+    "text": "已收到",
+    "inputTokens": 12719,
+    "outputTokens": 3,
+    "tokensPerSecond": 0.2514190720976874,
+    "contextSize": 12800,
+    "elapsedMs": 282200,
+    "timings": {
+      "cache_n": 0,
+      "prompt_n": 12719,
+      "prompt_ms": 274158.689,
+      "prompt_per_token_ms": 21.555050632911392,
+      "prompt_per_second": 46.39283929461743,
+      "predicted_n": 3,
+      "predicted_ms": 7954.846,
+      "predicted_per_token_ms": 3977.423,
+      "predicted_per_second": 0.2514190720976874
+    },
+    "wallTimeMs": 282216,
+    "reservedOutputTokens": 64,
+    "totalBudget": 12783,
+    "syntheticHistoryEntries": 603,
+    "fullBudgetRatio": 0.998671875
+  },
+  "peakRssKiB": 2138484
+}

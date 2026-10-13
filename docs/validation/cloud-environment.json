@@ -1,0 +1,47 @@
+{
+  "verifiedAt": "2026-10-13T10:30:28.324589+00:00",
+  "version": "0.2.0",
+  "workflow": "L-BOT React/core/native build development on Linux",
+  "installScriptExecuted": true,
+  "npmCiFrozenLock": true,
+  "productionBuildPassed": true,
+  "moduleTests": {
+    "tests": 190,
+    "passed": 190,
+    "failed": 0,
+    "skipped": 0
+  },
+  "uiTests": {
+    "tests": 49,
+    "passed": 49,
+    "failed": 0,
+    "usesExplicitNativeAndModelDoubles": true
+  },
+  "windowsUiProtocolTests": {
+    "tests": 34,
+    "passed": 34,
+    "actualWindowsTested": false
+  },
+  "toolchain": {
+    "java": "21.0.8+9",
+    "gradle": "8.11.1",
+    "androidSdk": 35,
+    "ndk": "28.2.13676358",
+    "cmake": "3.22.1"
+  },
+  "modelValidationReports": [
+    "windows-features-local-linux.json",
+    "local-simulation-9b-refined-linux.json",
+    "advice-training-local-linux.json"
+  ],
+  "cloudConfiguration": {
+    "saved": true,
+    "requiresPublish": true,
+    "newTaskRestoreVerified": false
+  },
+  "limitations": [
+    "Windows installer execution/PowerShell/UIA/IME/social clients are not tested on Windows",
+    "Android 8GB/thermal/background/30min and real API credential calls pending"
+  ],
+  "installScriptSha256": "82b6e78b078d62aaa27d2a107d3867c32097a24c029358f2c923fd1f31ca8780"
+}

@@ -1,0 +1,72 @@
+name: Build and publish L-BOT 0.2.0
+
+on:
+  push:
+    branches: [lbot-release-0.2.0]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: lbot-release-0.2.0
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    env:
+      ELECTRON_SKIP_BINARY_DOWNLOAD: '1'
+      CSC_IDENTITY_AUTO_DISCOVERY: 'false'
+      TC_TOOLING_DIR: ${{ runner.temp }}/lbot-tooling
+      LLAMA_SOURCE_DIR: ${{ runner.temp }}/llama.cpp
+      WHISPER_SOURCE_DIR: ${{ runner.temp }}/whisper.cpp
+      TC_RELEASE_LOG_DIR: ${{ github.workspace }}/.release-logs
+      CMAKE_BUILD_PARALLEL_LEVEL: '2'
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '24'
+          cache: npm
+      - name: Install and validate source
+        run: |
+          set -euo pipefail
+          mkdir -p .release-logs artifacts/validation
+          cp docs/validation/*.json artifacts/validation/
+          cp docs/validation/*.png artifacts/validation/
+          npm ci --no-audit --no-fund
+          npx playwright install --with-deps chromium
+          npm run verify 2>&1 | tee .release-logs/release-verify.log
+          npm run test:ui 2>&1 | tee .release-logs/ui-release-passed.log
+      - name: Build and independently verify Windows installer
+        run: |
+          set -euo pipefail
+          npm run build:windows
+          export TC_7ZIP="$(find .cache/electron-builder -type f -name 7zz -print -quit)"
+          test -n "$TC_7ZIP"
+          node scripts/verify-windows-package.mjs
+      - name: Prepare fixed Android toolchain
+        run: bash scripts/install-android-toolchain.sh
+      - name: Build and independently verify Android APK
+        run: |
+          set -euo pipefail
+          source scripts/android-env.sh
+          npm run build:android
+          python3 scripts/verify-android-package.py
+      - name: Package source and public evidence
+        run: python3 scripts/package-release.py
+      - name: Attach all checked files, then publish development release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          gh release view v0.2.0 --repo "$GITHUB_REPOSITORY" --json isDraft --jq .isDraft | grep -qx true
+          gh release upload v0.2.0 --repo "$GITHUB_REPOSITORY" --clobber \
+            artifacts/windows/L-BOT-Setup-0.2.0-x64.exe \
+            artifacts/android/L-BOT-Android-0.2.0-arm64-debug.apk \
+            artifacts/release/L-BOT-source-0.2.0.zip \
+            artifacts/release/L-BOT-validation-0.2.0.zip \
+            artifacts/release/SHA256SUMS.txt
+          gh release edit v0.2.0 --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" --draft=false --prerelease

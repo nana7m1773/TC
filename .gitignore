@@ -28,3 +28,4 @@ apps/desktop/resources/.prerequisites.staging-*/
 apps/desktop/resources/verify-vc-command.nsh
 
 .local-models/
+.release-logs/

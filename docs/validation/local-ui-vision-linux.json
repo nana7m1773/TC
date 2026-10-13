@@ -1,0 +1,31 @@
+{
+  "verifiedAt": "2026-10-12T03:32:49.824Z",
+  "host": {
+    "platform": "linux",
+    "cpu": "AMD EPYC 9V45 96-Core Processor",
+    "totalMemoryBytes": 35743784960
+  },
+  "model": {
+    "id": "qwen35-2b-hauhaucs-q4-k-m",
+    "sha256": "be3ccca13a9d1bc8b67165ea80bd103cd6151a37ad131183cc7ca388f78d9517"
+  },
+  "input": {
+    "path": "/tmp/tc-vision-fixture.png",
+    "sha256": "315682f146aef676bc61174740a8d1c123a6a29fb6169864716ed642634f7a26",
+    "groundTruth": "知己，私人AI社交助理，消息中心；示例好友与群聊，左栏模型/API/风格/联系人/待审核/运行记录。"
+  },
+  "elapsedMs": 24013,
+  "result": {
+    "text": "根据您提供的截图，以下是关于该软件名称、界面用途以及左侧功能区域的详细说明：\n\n### 1. 软件名称\n**知己 (Ji Zhi)**\n*   **依据：** 界面左上角显示的软件名称为“知己”，下方小字标注为“私人 AI 社交助理”。\n\n### 2. 界面用途\n这是一个**AI驱动的私人社交助手**，旨在帮助用户在社交场景中更自然、更个性化地与人交流。\n*   **核心功能：** 它模拟了真实人的性格、语气和思维模式，能够根据用户的输入（如关键词、图片、语音等）生成个性化的回复。\n*   **使用场景：** 适用于需要模拟特定人设（如朋友、家人、同事）进行对话的场合，例如模拟相亲、模拟面试、模拟聊天机器人等。\n*   **技术特点：** 界面顶部显示“完全本地地 - 不上传聊天",
+    "inputTokens": 1029,
+    "outputTokens": 192,
+    "contextSize": 12800,
+    "processingLocation": "local",
+    "imageWidth": 1280,
+    "imageHeight": 900
+  },
+  "limitations": [
+    "Linux CPU 云机验证，非 Windows 或 8 GB Android 实机。",
+    "这张截图含明确标识的模拟会话，没有真实平台登录或私聊联调。"
+  ]
+}

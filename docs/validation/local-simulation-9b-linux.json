@@ -1,0 +1,1547 @@
+{
+  "startedAt": "2026-10-13T05:30:44.025Z",
+  "host": {
+    "platform": "linux",
+    "cpu": "AMD EPYC 9V45 96-Core Processor",
+    "logicalCpuQuota": 4,
+    "totalMemoryBytes": 35743784960
+  },
+  "model": {
+    "version": 3,
+    "sizeBytes": 5627044224,
+    "tensorCount": 427,
+    "architecture": "qwen35",
+    "name": "Qwen3.5-9B-Uncensored-HauhauCS-Aggressive-BF16",
+    "nativeContextSize": 262144,
+    "contextLength": 262144,
+    "quantization": "Q4_K_M",
+    "quantizationType": 15,
+    "sha256": "2ca636d9e81d3d23ca9b60c234fe185d30ec082eeba69ce770fdb0c76559a4f5",
+    "verified": true
+  },
+  "configuredContextSize": 12800,
+  "transport": "simulation",
+  "generator": "real local 9B",
+  "windowsDeviceTested": false,
+  "androidDeviceTested": false,
+  "fixturesArePublicSynthetic": true,
+  "stages": [],
+  "loadMs": 8942,
+  "actualStatus": {
+    "state": "ready",
+    "contextSize": 12800,
+    "cacheType": "q8_0",
+    "backend": "CPU",
+    "inferenceTimeoutMs": 1200000,
+    "threads": 4,
+    "visionLoaded": false,
+    "modelId": "qwen35-9b-hauhaucs-q4-k-m",
+    "modelPath": "/workspace/.cache/models/.validation-9b/Qwen3.5-9B-Uncensored-HauhauCS-Aggressive-Q4_K_M.gguf",
+    "modelName": "Qwen3.5 9B · HauhauCS · Q4_K_M",
+    "loadTimeMs": 4978,
+    "engineAvailable": true,
+    "downloading": false,
+    "defaultModel": {
+      "id": "qwen35-9b-hauhaucs-q4-k-m",
+      "name": "Qwen3.5 9B · HauhauCS · Q4_K_M",
+      "filename": "Qwen3.5-9B-Uncensored-HauhauCS-Aggressive-Q4_K_M.gguf",
+      "url": "https://huggingface.co/HauhauCS/Qwen3.5-9B-Uncensored-HauhauCS-Aggressive/resolve/0a41c68809d375475f954be12ba7c40efa56c2a9/Qwen3.5-9B-Uncensored-HauhauCS-Aggressive-Q4_K_M.gguf",
+      "sha256": "2ca636d9e81d3d23ca9b60c234fe185d30ec082eeba69ce770fdb0c76559a4f5",
+      "sizeBytes": 5627044224,
+      "requiredStorageBytes": 8500000000,
+      "maxImportBytes": 16000000000,
+      "recommendedPhysicalMemoryBytes": 17179869184,
+      "resourceRecommendation": "At least 16 GiB physical memory and 8.5 GB free storage are recommended for the model, vision projector and working space. This is a resource recommendation, not a measured performance or Windows device acceptance claim.",
+      "quantization": "Q4_K_M",
+      "architecture": "qwen35",
+      "contextSize": 12800,
+      "nativeContextSize": 262144,
+      "parameterCount": 9000000000,
+      "format": "GGUF",
+      "source": "https://huggingface.co/HauhauCS/Qwen3.5-9B-Uncensored-HauhauCS-Aggressive",
+      "sourceRevision": "0a41c68809d375475f954be12ba7c40efa56c2a9",
+      "sourceVerified": true,
+      "checksumSource": "https://huggingface.co/api/models/HauhauCS/Qwen3.5-9B-Uncensored-HauhauCS-Aggressive/revision/0a41c68809d375475f954be12ba7c40efa56c2a9?blobs=true",
+      "originalModel": "https://huggingface.co/Qwen/Qwen3.5-9B",
+      "originalModelRevision": "c202236235762e1c871ad0ccb60c8ee5ba337b9a",
+      "contextSource": "https://huggingface.co/Qwen/Qwen3.5-9B/blob/c202236235762e1c871ad0ccb60c8ee5ba337b9a/config.json",
+      "contextSourceField": "text_config.max_position_embeddings",
+      "license": "Apache-2.0",
+      "licenseUrl": "https://huggingface.co/Qwen/Qwen3.5-9B/blob/c202236235762e1c871ad0ccb60c8ee5ba337b9a/LICENSE",
+      "publisherLicenseSource": "https://huggingface.co/HauhauCS/Qwen3.5-9B-Uncensored-HauhauCS-Aggressive/blob/0a41c68809d375475f954be12ba7c40efa56c2a9/README.md",
+      "publisherVariant": "Uncensored-HauhauCS-Aggressive",
+      "visionProjector": {
+        "id": "qwen35-9b-hauhaucs-mmproj-bf16",
+        "kind": "vision-projector",
+        "format": "GGUF",
+        "architecture": "clip",
+        "filename": "mmproj-Qwen3.5-9B-Uncensored-HauhauCS-Aggressive-BF16.gguf",
+        "url": "https://huggingface.co/HauhauCS/Qwen3.5-9B-Uncensored-HauhauCS-Aggressive/resolve/0a41c68809d375475f954be12ba7c40efa56c2a9/mmproj-Qwen3.5-9B-Uncensored-HauhauCS-Aggressive-BF16.gguf",
+        "sha256": "05f662501f8bd45607b079723a3e238a4e888fd085a10a53f4057a0e250f6934",
+        "sizeBytes": 921704448,
+        "requiredStorageBytes": 1200000000,
+        "quantization": "BF16",
+        "source": "https://huggingface.co/HauhauCS/Qwen3.5-9B-Uncensored-HauhauCS-Aggressive",
+        "sourceRevision": "0a41c68809d375475f954be12ba7c40efa56c2a9",
+        "checksumSource": "https://huggingface.co/api/models/HauhauCS/Qwen3.5-9B-Uncensored-HauhauCS-Aggressive/revision/0a41c68809d375475f954be12ba7c40efa56c2a9?blobs=true",
+        "sourceVerified": true,
+        "license": "Apache-2.0",
+        "installed": false,
+        "status": "Matching 9B BF16 vision projector metadata verified against the pinned publisher revision; downloaded artifact requires independent size, SHA-256 and GGUF architecture verification. Optional download, not bundled. Windows device acceptance pending."
+      },
+      "verifiedAt": "2026-10-13",
+      "verification": "Layer 1: pinned publisher revision, exact filenames, LFS SHA-256, byte sizes, base source and license verified against Hugging Face metadata; native context read from the pinned official Qwen config. Layer 2: complete downloaded artifacts must independently pass byte-size, SHA-256 and GGUF architecture/context verification before installation. Windows 9B inference and device performance acceptance remain pending."
+    },
+    "maxImportBytes": 16000000000
+  },
+  "simulationBefore": {
+    "transport": "simulation",
+    "now": 1791869452970,
+    "generatorKind": "local",
+    "queue": {
+      "version": 1,
+      "messages": [
+        {
+          "id": "same-id-five-scopes",
+          "scope": {
+            "accountId": "simulation:qq",
+            "conversationId": "demo-contact",
+            "contactId": "demo-contact"
+          },
+          "role": "peer",
+          "text": "周末一起吃个饭？",
+          "kind": "text",
+          "createdAt": 1791869452970
+        },
+        {
+          "id": "same-id-five-scopes",
+          "scope": {
+            "accountId": "simulation:wechat",
+            "conversationId": "demo-contact",
+            "contactId": "demo-contact"
+          },
+          "role": "peer",
+          "text": "最近忙吗？有空聊聊。",
+          "kind": "text",
+          "createdAt": 1791869452970
+        },
+        {
+          "id": "same-id-five-scopes",
+          "scope": {
+            "accountId": "simulation:bilibili",
+            "conversationId": "demo-contact",
+            "contactId": "demo-contact"
+          },
+          "role": "peer",
+          "text": "你分享的视频很有意思，谢谢！",
+          "kind": "text",
+          "createdAt": 1791869452970
+        },
+        {
+          "id": "same-id-five-scopes",
+          "scope": {
+            "accountId": "simulation:weibo",
+            "conversationId": "demo-contact",
+            "contactId": "demo-contact"
+          },
+          "role": "peer",
+          "text": "看到你发的照片了，拍得很好。",
+          "kind": "text",
+          "createdAt": 1791869452970
+        },
+        {
+          "id": "same-id-five-scopes",
+          "scope": {
+            "accountId": "simulation:whatsapp",
+            "conversationId": "demo-contact",
+            "contactId": "demo-contact"
+          },
+          "role": "peer",
+          "text": "Hi! Are you free to chat this weekend?",
+          "kind": "text",
+          "createdAt": 1791869452970
+        }
+      ],
+      "drafts": [
+        {
+          "id": "draft:1791869452970:1",
+          "scope": {
+            "accountId": "simulation:qq",
+            "conversationId": "demo-contact",
+            "contactId": "demo-contact"
+          },
+          "messageIds": [
+            "same-id-five-scopes"
+          ],
+          "text": "谢啦，我确认一下周末的安排再回你～",
+          "contextVersion": 1,
+          "status": "generated",
+          "createdAt": 1791869452970,
+          "riskReasons": [],
+          "replyDelayMs": 5000,
+          "notBefore": 1791869457970,
+          "replyTimingKey": "{\"mode\":\"fixed\",\"delayMs\":5000}",
+          "timingSampleCount": 0,
+          "timingFallback": false
+        },
+        {
+          "id": "draft:1791869452970:2",
+          "scope": {
+            "accountId": "simulation:wechat",
+            "conversationId": "demo-contact",
+            "contactId": "demo-contact"
+          },
+          "messageIds": [
+            "same-id-five-scopes"
+          ],
+          "text": "最近还好，就是有点忙。谢谢想着我，你想聊点什么呢？",
+          "contextVersion": 1,
+          "status": "generated",
+          "createdAt": 1791869452970,
+          "riskReasons": [],
+          "replyDelayMs": 5000,
+          "notBefore": 1791869457970,
+          "replyTimingKey": "{\"mode\":\"fixed\",\"delayMs\":5000}",
+          "timingSampleCount": 0,
+          "timingFallback": false
+        },
+        {
+          "id": "draft:1791869452970:3",
+          "scope": {
+            "accountId": "simulation:bilibili",
+            "conversationId": "demo-contact",
+            "contactId": "demo-contact"
+          },
+          "messageIds": [
+            "same-id-five-scopes"
+          ],
+          "text": "谢啦，视频确实挺有意思的，你也觉得精彩就好～",
+          "contextVersion": 1,
+          "status": "generated",
+          "createdAt": 1791869452970,
+          "riskReasons": [],
+          "replyDelayMs": 5000,
+          "notBefore": 1791869457970,
+          "replyTimingKey": "{\"mode\":\"fixed\",\"delayMs\":5000}",
+          "timingSampleCount": 0,
+          "timingFallback": false
+        },
+        {
+          "id": "draft:1791869452970:4",
+          "scope": {
+            "accountId": "simulation:weibo",
+            "conversationId": "demo-contact",
+            "contactId": "demo-contact"
+          },
+          "messageIds": [
+            "same-id-five-scopes"
+          ],
+          "text": "谢啦，我确认一下再回你～",
+          "contextVersion": 1,
+          "status": "generated",
+          "createdAt": 1791869452970,
+          "riskReasons": [],
+          "replyDelayMs": 5000,
+          "notBefore": 1791869457970,
+          "replyTimingKey": "{\"mode\":\"fixed\",\"delayMs\":5000}",
+          "timingSampleCount": 0,
+          "timingFallback": false
+        },
+        {
+          "id": "draft:1791869452970:5",
+          "scope": {
+            "accountId": "simulation:whatsapp",
+            "conversationId": "demo-contact",
+            "contactId": "demo-contact"
+          },
+          "messageIds": [
+            "same-id-five-scopes"
+          ],
+          "text": "谢谢想着我，我先看看周末的安排，你想聊些什么呀？",
+          "contextVersion": 1,
+          "status": "generated",
+          "createdAt": 1791869452970,
+          "riskReasons": [],
+          "replyDelayMs": 5000,
+          "notBefore": 1791869457970,
+          "replyTimingKey": "{\"mode\":\"fixed\",\"delayMs\":5000}",
+          "timingSampleCount": 0,
+          "timingFallback": false
+        }
+      ],
+      "paused": false,
+      "takenOver": [],
+      "contextVersions": {
+        "[\"simulation:qq\",\"demo-contact\",\"demo-contact\"]": 1,
+        "[\"simulation:wechat\",\"demo-contact\",\"demo-contact\"]": 1,
+        "[\"simulation:bilibili\",\"demo-contact\",\"demo-contact\"]": 1,
+        "[\"simulation:weibo\",\"demo-contact\",\"demo-contact\"]": 1,
+        "[\"simulation:whatsapp\",\"demo-contact\",\"demo-contact\"]": 1
+      },
+      "lastSentAt": {},
+      "answered": [],
+      "inFlight": [],
+      "sequence": 5,
+      "seen": [
+        "[\"[\\\"simulation:qq\\\",\\\"demo-contact\\\",\\\"demo-contact\\\"]\",\"same-id-five-scopes\"]",
+        "[\"[\\\"simulation:wechat\\\",\\\"demo-contact\\\",\\\"demo-contact\\\"]\",\"same-id-five-scopes\"]",
+        "[\"[\\\"simulation:bilibili\\\",\\\"demo-contact\\\",\\\"demo-contact\\\"]\",\"same-id-five-scopes\"]",
+        "[\"[\\\"simulation:weibo\\\",\\\"demo-contact\\\",\\\"demo-contact\\\"]\",\"same-id-five-scopes\"]",
+        "[\"[\\\"simulation:whatsapp\\\",\\\"demo-contact\\\",\\\"demo-contact\\\"]\",\"same-id-five-scopes\"]"
+      ]
+    },
+    "sent": [],
+    "events": [
+      {
+        "id": "simulation-event:1",
+        "at": 1791869452970,
+        "kind": "config_changed",
+        "platform": "qq",
+        "messageIds": [],
+        "reasons": [],
+        "detail": "模拟规则已修改，旧草稿失效。"
+      },
+      {
+        "id": "simulation-event:2",
+        "at": 1791869452970,
+        "kind": "received",
+        "platform": "qq",
+        "messageIds": [
+          "same-id-five-scopes"
+        ],
+        "reasons": [],
+        "detail": "内存模拟收到消息。"
+      },
+      {
+        "id": "simulation-event:3",
+        "at": 1791869452970,
+        "kind": "config_changed",
+        "platform": "wechat",
+        "messageIds": [],
+        "reasons": [],
+        "detail": "模拟规则已修改，旧草稿失效。"
+      },
+      {
+        "id": "simulation-event:4",
+        "at": 1791869452970,
+        "kind": "received",
+        "platform": "wechat",
+        "messageIds": [
+          "same-id-five-scopes"
+        ],
+        "reasons": [],
+        "detail": "内存模拟收到消息。"
+      },
+      {
+        "id": "simulation-event:5",
+        "at": 1791869452970,
+        "kind": "config_changed",
+        "platform": "bilibili",
+        "messageIds": [],
+        "reasons": [],
+        "detail": "模拟规则已修改，旧草稿失效。"
+      },
+      {
+        "id": "simulation-event:6",
+        "at": 1791869452970,
+        "kind": "received",
+        "platform": "bilibili",
+        "messageIds": [
+          "same-id-five-scopes"
+        ],
+        "reasons": [],
+        "detail": "内存模拟收到消息。"
+      },
+      {
+        "id": "simulation-event:7",
+        "at": 1791869452970,
+        "kind": "config_changed",
+        "platform": "weibo",
+        "messageIds": [],
+        "reasons": [],
+        "detail": "模拟规则已修改，旧草稿失效。"
+      },
+      {
+        "id": "simulation-event:8",
+        "at": 1791869452970,
+        "kind": "received",
+        "platform": "weibo",
+        "messageIds": [
+          "same-id-five-scopes"
+        ],
+        "reasons": [],
+        "detail": "内存模拟收到消息。"
+      },
+      {
+        "id": "simulation-event:9",
+        "at": 1791869452970,
+        "kind": "config_changed",
+        "platform": "whatsapp",
+        "messageIds": [],
+        "reasons": [],
+        "detail": "模拟规则已修改，旧草稿失效。"
+      },
+      {
+        "id": "simulation-event:10",
+        "at": 1791869452970,
+        "kind": "received",
+        "platform": "whatsapp",
+        "messageIds": [
+          "same-id-five-scopes"
+        ],
+        "reasons": [],
+        "detail": "内存模拟收到消息。"
+      },
+      {
+        "id": "simulation-event:11",
+        "at": 1791869452970,
+        "kind": "generated",
+        "platform": "qq",
+        "messageIds": [
+          "same-id-five-scopes"
+        ],
+        "reasons": [],
+        "detail": "指定 AI 生成器已返回回复；平台发送仍为内存模拟。",
+        "draftId": "draft:1791869452970:1"
+      },
+      {
+        "id": "simulation-event:12",
+        "at": 1791869452970,
+        "kind": "waiting",
+        "platform": "qq",
+        "messageIds": [
+          "same-id-five-scopes"
+        ],
+        "reasons": [
+          "reply_delay"
+        ],
+        "detail": "等待设定的回复间隔；尚未发送。",
+        "draftId": "draft:1791869452970:1",
+        "dueAt": 1791869457970
+      },
+      {
+        "id": "simulation-event:13",
+        "at": 1791869452970,
+        "kind": "generated",
+        "platform": "wechat",
+        "messageIds": [
+          "same-id-five-scopes"
+        ],
+        "reasons": [],
+        "detail": "指定 AI 生成器已返回回复；平台发送仍为内存模拟。",
+        "draftId": "draft:1791869452970:2"
+      },
+      {
+        "id": "simulation-event:14",
+        "at": 1791869452970,
+        "kind": "waiting",
+        "platform": "wechat",
+        "messageIds": [
+          "same-id-five-scopes"
+        ],
+        "reasons": [
+          "reply_delay"
+        ],
+        "detail": "等待设定的回复间隔；尚未发送。",
+        "draftId": "draft:1791869452970:2",
+        "dueAt": 1791869457970
+      },
+      {
+        "id": "simulation-event:15",
+        "at": 1791869452970,
+        "kind": "generated",
+        "platform": "bilibili",
+        "messageIds": [
+          "same-id-five-scopes"
+        ],
+        "reasons": [],
+        "detail": "指定 AI 生成器已返回回复；平台发送仍为内存模拟。",
+        "draftId": "draft:1791869452970:3"
+      },
+      {
+        "id": "simulation-event:16",
+        "at": 1791869452970,
+        "kind": "waiting",
+        "platform": "bilibili",
+        "messageIds": [
+          "same-id-five-scopes"
+        ],
+        "reasons": [
+          "reply_delay"
+        ],
+        "detail": "等待设定的回复间隔；尚未发送。",
+        "draftId": "draft:1791869452970:3",
+        "dueAt": 1791869457970
+      },
+      {
+        "id": "simulation-event:17",
+        "at": 1791869452970,
+        "kind": "generated",
+        "platform": "weibo",
+        "messageIds": [
+          "same-id-five-scopes"
+        ],
+        "reasons": [],
+        "detail": "指定 AI 生成器已返回回复；平台发送仍为内存模拟。",
+        "draftId": "draft:1791869452970:4"
+      },
+      {
+        "id": "simulation-event:18",
+        "at": 1791869452970,
+        "kind": "waiting",
+        "platform": "weibo",
+        "messageIds": [
+          "same-id-five-scopes"
+        ],
+        "reasons": [
+          "reply_delay"
+        ],
+        "detail": "等待设定的回复间隔；尚未发送。",
+        "draftId": "draft:1791869452970:4",
+        "dueAt": 1791869457970
+      },
+      {
+        "id": "simulation-event:19",
+        "at": 1791869452970,
+        "kind": "generated",
+        "platform": "whatsapp",
+        "messageIds": [
+          "same-id-five-scopes"
+        ],
+        "reasons": [],
+        "detail": "指定 AI 生成器已返回回复；平台发送仍为内存模拟。",
+        "draftId": "draft:1791869452970:5"
+      },
+      {
+        "id": "simulation-event:20",
+        "at": 1791869452970,
+        "kind": "waiting",
+        "platform": "whatsapp",
+        "messageIds": [
+          "same-id-five-scopes"
+        ],
+        "reasons": [
+          "reply_delay"
+        ],
+        "detail": "等待设定的回复间隔；尚未发送。",
+        "draftId": "draft:1791869452970:5",
+        "dueAt": 1791869457970
+      }
+    ],
+    "rules": {
+      "qq": {
+        "id": "default:simulation:qq",
+        "accountId": "simulation:qq",
+        "mode": "auto",
+        "enabled": true,
+        "cooldownMs": 30000,
+        "allowedKinds": [
+          "text",
+          "image",
+          "audio"
+        ],
+        "autoAuthorized": true,
+        "replyTiming": {
+          "mode": "fixed",
+          "delayMs": 5000
+        }
+      },
+      "wechat": {
+        "id": "default:simulation:wechat",
+        "accountId": "simulation:wechat",
+        "mode": "auto",
+        "enabled": true,
+        "cooldownMs": 30000,
+        "allowedKinds": [
+          "text",
+          "image",
+          "audio"
+        ],
+        "autoAuthorized": true,
+        "replyTiming": {
+          "mode": "fixed",
+          "delayMs": 5000
+        }
+      },
+      "bilibili": {
+        "id": "default:simulation:bilibili",
+        "accountId": "simulation:bilibili",
+        "mode": "auto",
+        "enabled": true,
+        "cooldownMs": 30000,
+        "allowedKinds": [
+          "text",
+          "image",
+          "audio"
+        ],
+        "autoAuthorized": true,
+        "replyTiming": {
+          "mode": "fixed",
+          "delayMs": 5000
+        }
+      },
+      "weibo": {
+        "id": "default:simulation:weibo",
+        "accountId": "simulation:weibo",
+        "mode": "auto",
+        "enabled": true,
+        "cooldownMs": 30000,
+        "allowedKinds": [
+          "text",
+          "image",
+          "audio"
+        ],
+        "autoAuthorized": true,
+        "replyTiming": {
+          "mode": "fixed",
+          "delayMs": 5000
+        }
+      },
+      "whatsapp": {
+        "id": "default:simulation:whatsapp",
+        "accountId": "simulation:whatsapp",
+        "mode": "auto",
+        "enabled": true,
+        "cooldownMs": 30000,
+        "allowedKinds": [
+          "text",
+          "image",
+          "audio"
+        ],
+        "autoAuthorized": true,
+        "replyTiming": {
+          "mode": "fixed",
+          "delayMs": 5000
+        }
+      }
+    },
+    "schedules": [
+      {
+        "draftId": "draft:1791869452970:1",
+        "dueAt": 1791869457970,
+        "delayMs": 5000
+      },
+      {
+        "draftId": "draft:1791869452970:2",
+        "dueAt": 1791869457970,
+        "delayMs": 5000
+      },
+      {
+        "draftId": "draft:1791869452970:3",
+        "dueAt": 1791869457970,
+        "delayMs": 5000
+      },
+      {
+        "draftId": "draft:1791869452970:4",
+        "dueAt": 1791869457970,
+        "delayMs": 5000
+      },
+      {
+        "draftId": "draft:1791869452970:5",
+        "dueAt": 1791869457970,
+        "delayMs": 5000
+      }
+    ]
+  },
+  "simulationAfter": {
+    "transport": "simulation",
+    "now": 1791869457970,
+    "generatorKind": "local",
+    "queue": {
+      "version": 1,
+      "messages": [
+        {
+          "id": "same-id-five-scopes",
+          "scope": {
+            "accountId": "simulation:qq",
+            "conversationId": "demo-contact",
+            "contactId": "demo-contact"
+          },
+          "role": "peer",
+          "text": "周末一起吃个饭？",
+          "kind": "text",
+          "createdAt": 1791869452970
+        },
+        {
+          "id": "same-id-five-scopes",
+          "scope": {
+            "accountId": "simulation:wechat",
+            "conversationId": "demo-contact",
+            "contactId": "demo-contact"
+          },
+          "role": "peer",
+          "text": "最近忙吗？有空聊聊。",
+          "kind": "text",
+          "createdAt": 1791869452970
+        },
+        {
+          "id": "same-id-five-scopes",
+          "scope": {
+            "accountId": "simulation:bilibili",
+            "conversationId": "demo-contact",
+            "contactId": "demo-contact"
+          },
+          "role": "peer",
+          "text": "你分享的视频很有意思，谢谢！",
+          "kind": "text",
+          "createdAt": 1791869452970
+        },
+        {
+          "id": "same-id-five-scopes",
+          "scope": {
+            "accountId": "simulation:weibo",
+            "conversationId": "demo-contact",
+            "contactId": "demo-contact"
+          },
+          "role": "peer",
+          "text": "看到你发的照片了，拍得很好。",
+          "kind": "text",
+          "createdAt": 1791869452970
+        },
+        {
+          "id": "same-id-five-scopes",
+          "scope": {
+            "accountId": "simulation:whatsapp",
+            "conversationId": "demo-contact",
+            "contactId": "demo-contact"
+          },
+          "role": "peer",
+          "text": "Hi! Are you free to chat this weekend?",
+          "kind": "text",
+          "createdAt": 1791869452970
+        },
+        {
+          "id": "simulation-receipt:1",
+          "scope": {
+            "accountId": "simulation:qq",
+            "conversationId": "demo-contact",
+            "contactId": "demo-contact"
+          },
+          "role": "self",
+          "origin": "assistant",
+          "text": "谢啦，我确认一下周末的安排再回你～",
+          "kind": "text",
+          "createdAt": 1791869457970
+        },
+        {
+          "id": "simulation-receipt:2",
+          "scope": {
+            "accountId": "simulation:wechat",
+            "conversationId": "demo-contact",
+            "contactId": "demo-contact"
+          },
+          "role": "self",
+          "origin": "assistant",
+          "text": "最近还好，就是有点忙。谢谢想着我，你想聊点什么呢？",
+          "kind": "text",
+          "createdAt": 1791869457970
+        },
+        {
+          "id": "simulation-receipt:3",
+          "scope": {
+            "accountId": "simulation:bilibili",
+            "conversationId": "demo-contact",
+            "contactId": "demo-contact"
+          },
+          "role": "self",
+          "origin": "assistant",
+          "text": "谢啦，视频确实挺有意思的，你也觉得精彩就好～",
+          "kind": "text",
+          "createdAt": 1791869457970
+        },
+        {
+          "id": "simulation-receipt:4",
+          "scope": {
+            "accountId": "simulation:weibo",
+            "conversationId": "demo-contact",
+            "contactId": "demo-contact"
+          },
+          "role": "self",
+          "origin": "assistant",
+          "text": "谢啦，我确认一下再回你～",
+          "kind": "text",
+          "createdAt": 1791869457970
+        },
+        {
+          "id": "simulation-receipt:5",
+          "scope": {
+            "accountId": "simulation:whatsapp",
+            "conversationId": "demo-contact",
+            "contactId": "demo-contact"
+          },
+          "role": "self",
+          "origin": "assistant",
+          "text": "谢谢想着我，我先看看周末的安排，你想聊些什么呀？",
+          "kind": "text",
+          "createdAt": 1791869457970
+        }
+      ],
+      "drafts": [
+        {
+          "id": "draft:1791869452970:1",
+          "scope": {
+            "accountId": "simulation:qq",
+            "conversationId": "demo-contact",
+            "contactId": "demo-contact"
+          },
+          "messageIds": [
+            "same-id-five-scopes"
+          ],
+          "text": "谢啦，我确认一下周末的安排再回你～",
+          "contextVersion": 1,
+          "status": "accepted",
+          "createdAt": 1791869452970,
+          "riskReasons": [],
+          "replyDelayMs": 5000,
+          "notBefore": 1791869457970,
+          "replyTimingKey": "{\"mode\":\"fixed\",\"delayMs\":5000}",
+          "timingSampleCount": 0,
+          "timingFallback": false
+        },
+        {
+          "id": "draft:1791869452970:2",
+          "scope": {
+            "accountId": "simulation:wechat",
+            "conversationId": "demo-contact",
+            "contactId": "demo-contact"
+          },
+          "messageIds": [
+            "same-id-five-scopes"
+          ],
+          "text": "最近还好，就是有点忙。谢谢想着我，你想聊点什么呢？",
+          "contextVersion": 1,
+          "status": "accepted",
+          "createdAt": 1791869452970,
+          "riskReasons": [],
+          "replyDelayMs": 5000,
+          "notBefore": 1791869457970,
+          "replyTimingKey": "{\"mode\":\"fixed\",\"delayMs\":5000}",
+          "timingSampleCount": 0,
+          "timingFallback": false
+        },
+        {
+          "id": "draft:1791869452970:3",
+          "scope": {
+            "accountId": "simulation:bilibili",
+            "conversationId": "demo-contact",
+            "contactId": "demo-contact"
+          },
+          "messageIds": [
+            "same-id-five-scopes"
+          ],
+          "text": "谢啦，视频确实挺有意思的，你也觉得精彩就好～",
+          "contextVersion": 1,
+          "status": "accepted",
+          "createdAt": 1791869452970,
+          "riskReasons": [],
+          "replyDelayMs": 5000,
+          "notBefore": 1791869457970,
+          "replyTimingKey": "{\"mode\":\"fixed\",\"delayMs\":5000}",
+          "timingSampleCount": 0,
+          "timingFallback": false
+        },
+        {
+          "id": "draft:1791869452970:4",
+          "scope": {
+            "accountId": "simulation:weibo",
+            "conversationId": "demo-contact",
+            "contactId": "demo-contact"
+          },
+          "messageIds": [
+            "same-id-five-scopes"
+          ],
+          "text": "谢啦，我确认一下再回你～",
+          "contextVersion": 1,
+          "status": "accepted",
+          "createdAt": 1791869452970,
+          "riskReasons": [],
+          "replyDelayMs": 5000,
+          "notBefore": 1791869457970,
+          "replyTimingKey": "{\"mode\":\"fixed\",\"delayMs\":5000}",
+          "timingSampleCount": 0,
+          "timingFallback": false
+        },
+        {
+          "id": "draft:1791869452970:5",
+          "scope": {
+            "accountId": "simulation:whatsapp",
+            "conversationId": "demo-contact",
+            "contactId": "demo-contact"
+          },
+          "messageIds": [
+            "same-id-five-scopes"
+          ],
+          "text": "谢谢想着我，我先看看周末的安排，你想聊些什么呀？",
+          "contextVersion": 1,
+          "status": "accepted",
+          "createdAt": 1791869452970,
+          "riskReasons": [],
+          "replyDelayMs": 5000,
+          "notBefore": 1791869457970,
+          "replyTimingKey": "{\"mode\":\"fixed\",\"delayMs\":5000}",
+          "timingSampleCount": 0,
+          "timingFallback": false
+        }
+      ],
+      "paused": false,
+      "takenOver": [],
+      "contextVersions": {
+        "[\"simulation:qq\",\"demo-contact\",\"demo-contact\"]": 2,
+        "[\"simulation:wechat\",\"demo-contact\",\"demo-contact\"]": 2,
+        "[\"simulation:bilibili\",\"demo-contact\",\"demo-contact\"]": 2,
+        "[\"simulation:weibo\",\"demo-contact\",\"demo-contact\"]": 2,
+        "[\"simulation:whatsapp\",\"demo-contact\",\"demo-contact\"]": 2
+      },
+      "lastSentAt": {
+        "[\"simulation:qq\",\"demo-contact\",\"demo-contact\"]": 1791869457970,
+        "[\"simulation:wechat\",\"demo-contact\",\"demo-contact\"]": 1791869457970,
+        "[\"simulation:bilibili\",\"demo-contact\",\"demo-contact\"]": 1791869457970,
+        "[\"simulation:weibo\",\"demo-contact\",\"demo-contact\"]": 1791869457970,
+        "[\"simulation:whatsapp\",\"demo-contact\",\"demo-contact\"]": 1791869457970
+      },
+      "answered": [
+        "[\"[\\\"simulation:qq\\\",\\\"demo-contact\\\",\\\"demo-contact\\\"]\",\"same-id-five-scopes\"]",
+        "[\"[\\\"simulation:wechat\\\",\\\"demo-contact\\\",\\\"demo-contact\\\"]\",\"same-id-five-scopes\"]",
+        "[\"[\\\"simulation:bilibili\\\",\\\"demo-contact\\\",\\\"demo-contact\\\"]\",\"same-id-five-scopes\"]",
+        "[\"[\\\"simulation:weibo\\\",\\\"demo-contact\\\",\\\"demo-contact\\\"]\",\"same-id-five-scopes\"]",
+        "[\"[\\\"simulation:whatsapp\\\",\\\"demo-contact\\\",\\\"demo-contact\\\"]\",\"same-id-five-scopes\"]"
+      ],
+      "inFlight": [],
+      "sequence": 5,
+      "seen": [
+        "[\"[\\\"simulation:qq\\\",\\\"demo-contact\\\",\\\"demo-contact\\\"]\",\"same-id-five-scopes\"]",
+        "[\"[\\\"simulation:wechat\\\",\\\"demo-contact\\\",\\\"demo-contact\\\"]\",\"same-id-five-scopes\"]",
+        "[\"[\\\"simulation:bilibili\\\",\\\"demo-contact\\\",\\\"demo-contact\\\"]\",\"same-id-five-scopes\"]",
+        "[\"[\\\"simulation:weibo\\\",\\\"demo-contact\\\",\\\"demo-contact\\\"]\",\"same-id-five-scopes\"]",
+        "[\"[\\\"simulation:whatsapp\\\",\\\"demo-contact\\\",\\\"demo-contact\\\"]\",\"same-id-five-scopes\"]",
+        "[\"[\\\"simulation:qq\\\",\\\"demo-contact\\\",\\\"demo-contact\\\"]\",\"simulation-receipt:1\"]",
+        "[\"[\\\"simulation:wechat\\\",\\\"demo-contact\\\",\\\"demo-contact\\\"]\",\"simulation-receipt:2\"]",
+        "[\"[\\\"simulation:bilibili\\\",\\\"demo-contact\\\",\\\"demo-contact\\\"]\",\"simulation-receipt:3\"]",
+        "[\"[\\\"simulation:weibo\\\",\\\"demo-contact\\\",\\\"demo-contact\\\"]\",\"simulation-receipt:4\"]",
+        "[\"[\\\"simulation:whatsapp\\\",\\\"demo-contact\\\",\\\"demo-contact\\\"]\",\"simulation-receipt:5\"]"
+      ]
+    },
+    "sent": [
+      {
+        "transport": "simulation",
+        "platform": "qq",
+        "draftId": "draft:1791869452970:1",
+        "receiptId": "simulation-receipt:1",
+        "messageIds": [
+          "same-id-five-scopes"
+        ],
+        "scope": {
+          "accountId": "simulation:qq",
+          "conversationId": "demo-contact",
+          "contactId": "demo-contact"
+        },
+        "text": "谢啦，我确认一下周末的安排再回你～",
+        "acceptedAt": 1791869457970,
+        "generatorKind": "local"
+      },
+      {
+        "transport": "simulation",
+        "platform": "wechat",
+        "draftId": "draft:1791869452970:2",
+        "receiptId": "simulation-receipt:2",
+        "messageIds": [
+          "same-id-five-scopes"
+        ],
+        "scope": {
+          "accountId": "simulation:wechat",
+          "conversationId": "demo-contact",
+          "contactId": "demo-contact"
+        },
+        "text": "最近还好，就是有点忙。谢谢想着我，你想聊点什么呢？",
+        "acceptedAt": 1791869457970,
+        "generatorKind": "local"
+      },
+      {
+        "transport": "simulation",
+        "platform": "bilibili",
+        "draftId": "draft:1791869452970:3",
+        "receiptId": "simulation-receipt:3",
+        "messageIds": [
+          "same-id-five-scopes"
+        ],
+        "scope": {
+          "accountId": "simulation:bilibili",
+          "conversationId": "demo-contact",
+          "contactId": "demo-contact"
+        },
+        "text": "谢啦，视频确实挺有意思的，你也觉得精彩就好～",
+        "acceptedAt": 1791869457970,
+        "generatorKind": "local"
+      },
+      {
+        "transport": "simulation",
+        "platform": "weibo",
+        "draftId": "draft:1791869452970:4",
+        "receiptId": "simulation-receipt:4",
+        "messageIds": [
+          "same-id-five-scopes"
+        ],
+        "scope": {
+          "accountId": "simulation:weibo",
+          "conversationId": "demo-contact",
+          "contactId": "demo-contact"
+        },
+        "text": "谢啦，我确认一下再回你～",
+        "acceptedAt": 1791869457970,
+        "generatorKind": "local"
+      },
+      {
+        "transport": "simulation",
+        "platform": "whatsapp",
+        "draftId": "draft:1791869452970:5",
+        "receiptId": "simulation-receipt:5",
+        "messageIds": [
+          "same-id-five-scopes"
+        ],
+        "scope": {
+          "accountId": "simulation:whatsapp",
+          "conversationId": "demo-contact",
+          "contactId": "demo-contact"
+        },
+        "text": "谢谢想着我，我先看看周末的安排，你想聊些什么呀？",
+        "acceptedAt": 1791869457970,
+        "generatorKind": "local"
+      }
+    ],
+    "events": [
+      {
+        "id": "simulation-event:1",
+        "at": 1791869452970,
+        "kind": "config_changed",
+        "platform": "qq",
+        "messageIds": [],
+        "reasons": [],
+        "detail": "模拟规则已修改，旧草稿失效。"
+      },
+      {
+        "id": "simulation-event:2",
+        "at": 1791869452970,
+        "kind": "received",
+        "platform": "qq",
+        "messageIds": [
+          "same-id-five-scopes"
+        ],
+        "reasons": [],
+        "detail": "内存模拟收到消息。"
+      },
+      {
+        "id": "simulation-event:3",
+        "at": 1791869452970,
+        "kind": "config_changed",
+        "platform": "wechat",
+        "messageIds": [],
+        "reasons": [],
+        "detail": "模拟规则已修改，旧草稿失效。"
+      },
+      {
+        "id": "simulation-event:4",
+        "at": 1791869452970,
+        "kind": "received",
+        "platform": "wechat",
+        "messageIds": [
+          "same-id-five-scopes"
+        ],
+        "reasons": [],
+        "detail": "内存模拟收到消息。"
+      },
+      {
+        "id": "simulation-event:5",
+        "at": 1791869452970,
+        "kind": "config_changed",
+        "platform": "bilibili",
+        "messageIds": [],
+        "reasons": [],
+        "detail": "模拟规则已修改，旧草稿失效。"
+      },
+      {
+        "id": "simulation-event:6",
+        "at": 1791869452970,
+        "kind": "received",
+        "platform": "bilibili",
+        "messageIds": [
+          "same-id-five-scopes"
+        ],
+        "reasons": [],
+        "detail": "内存模拟收到消息。"
+      },
+      {
+        "id": "simulation-event:7",
+        "at": 1791869452970,
+        "kind": "config_changed",
+        "platform": "weibo",
+        "messageIds": [],
+        "reasons": [],
+        "detail": "模拟规则已修改，旧草稿失效。"
+      },
+      {
+        "id": "simulation-event:8",
+        "at": 1791869452970,
+        "kind": "received",
+        "platform": "weibo",
+        "messageIds": [
+          "same-id-five-scopes"
+        ],
+        "reasons": [],
+        "detail": "内存模拟收到消息。"
+      },
+      {
+        "id": "simulation-event:9",
+        "at": 1791869452970,
+        "kind": "config_changed",
+        "platform": "whatsapp",
+        "messageIds": [],
+        "reasons": [],
+        "detail": "模拟规则已修改，旧草稿失效。"
+      },
+      {
+        "id": "simulation-event:10",
+        "at": 1791869452970,
+        "kind": "received",
+        "platform": "whatsapp",
+        "messageIds": [
+          "same-id-five-scopes"
+        ],
+        "reasons": [],
+        "detail": "内存模拟收到消息。"
+      },
+      {
+        "id": "simulation-event:11",
+        "at": 1791869452970,
+        "kind": "generated",
+        "platform": "qq",
+        "messageIds": [
+          "same-id-five-scopes"
+        ],
+        "reasons": [],
+        "detail": "指定 AI 生成器已返回回复；平台发送仍为内存模拟。",
+        "draftId": "draft:1791869452970:1"
+      },
+      {
+        "id": "simulation-event:12",
+        "at": 1791869452970,
+        "kind": "waiting",
+        "platform": "qq",
+        "messageIds": [
+          "same-id-five-scopes"
+        ],
+        "reasons": [
+          "reply_delay"
+        ],
+        "detail": "等待设定的回复间隔；尚未发送。",
+        "draftId": "draft:1791869452970:1",
+        "dueAt": 1791869457970
+      },
+      {
+        "id": "simulation-event:13",
+        "at": 1791869452970,
+        "kind": "generated",
+        "platform": "wechat",
+        "messageIds": [
+          "same-id-five-scopes"
+        ],
+        "reasons": [],
+        "detail": "指定 AI 生成器已返回回复；平台发送仍为内存模拟。",
+        "draftId": "draft:1791869452970:2"
+      },
+      {
+        "id": "simulation-event:14",
+        "at": 1791869452970,
+        "kind": "waiting",
+        "platform": "wechat",
+        "messageIds": [
+          "same-id-five-scopes"
+        ],
+        "reasons": [
+          "reply_delay"
+        ],
+        "detail": "等待设定的回复间隔；尚未发送。",
+        "draftId": "draft:1791869452970:2",
+        "dueAt": 1791869457970
+      },
+      {
+        "id": "simulation-event:15",
+        "at": 1791869452970,
+        "kind": "generated",
+        "platform": "bilibili",
+        "messageIds": [
+          "same-id-five-scopes"
+        ],
+        "reasons": [],
+        "detail": "指定 AI 生成器已返回回复；平台发送仍为内存模拟。",
+        "draftId": "draft:1791869452970:3"
+      },
+      {
+        "id": "simulation-event:16",
+        "at": 1791869452970,
+        "kind": "waiting",
+        "platform": "bilibili",
+        "messageIds": [
+          "same-id-five-scopes"
+        ],
+        "reasons": [
+          "reply_delay"
+        ],
+        "detail": "等待设定的回复间隔；尚未发送。",
+        "draftId": "draft:1791869452970:3",
+        "dueAt": 1791869457970
+      },
+      {
+        "id": "simulation-event:17",
+        "at": 1791869452970,
+        "kind": "generated",
+        "platform": "weibo",
+        "messageIds": [
+          "same-id-five-scopes"
+        ],
+        "reasons": [],
+        "detail": "指定 AI 生成器已返回回复；平台发送仍为内存模拟。",
+        "draftId": "draft:1791869452970:4"
+      },
+      {
+        "id": "simulation-event:18",
+        "at": 1791869452970,
+        "kind": "waiting",
+        "platform": "weibo",
+        "messageIds": [
+          "same-id-five-scopes"
+        ],
+        "reasons": [
+          "reply_delay"
+        ],
+        "detail": "等待设定的回复间隔；尚未发送。",
+        "draftId": "draft:1791869452970:4",
+        "dueAt": 1791869457970
+      },
+      {
+        "id": "simulation-event:19",
+        "at": 1791869452970,
+        "kind": "generated",
+        "platform": "whatsapp",
+        "messageIds": [
+          "same-id-five-scopes"
+        ],
+        "reasons": [],
+        "detail": "指定 AI 生成器已返回回复；平台发送仍为内存模拟。",
+        "draftId": "draft:1791869452970:5"
+      },
+      {
+        "id": "simulation-event:20",
+        "at": 1791869452970,
+        "kind": "waiting",
+        "platform": "whatsapp",
+        "messageIds": [
+          "same-id-five-scopes"
+        ],
+        "reasons": [
+          "reply_delay"
+        ],
+        "detail": "等待设定的回复间隔；尚未发送。",
+        "draftId": "draft:1791869452970:5",
+        "dueAt": 1791869457970
+      },
+      {
+        "id": "simulation-event:21",
+        "at": 1791869457970,
+        "kind": "sent",
+        "platform": "qq",
+        "messageIds": [
+          "same-id-five-scopes"
+        ],
+        "reasons": [],
+        "detail": "内存模拟连接器已接受回复；没有向真实平台发送。",
+        "draftId": "draft:1791869452970:1"
+      },
+      {
+        "id": "simulation-event:22",
+        "at": 1791869457970,
+        "kind": "sent",
+        "platform": "wechat",
+        "messageIds": [
+          "same-id-five-scopes"
+        ],
+        "reasons": [],
+        "detail": "内存模拟连接器已接受回复；没有向真实平台发送。",
+        "draftId": "draft:1791869452970:2"
+      },
+      {
+        "id": "simulation-event:23",
+        "at": 1791869457970,
+        "kind": "sent",
+        "platform": "bilibili",
+        "messageIds": [
+          "same-id-five-scopes"
+        ],
+        "reasons": [],
+        "detail": "内存模拟连接器已接受回复；没有向真实平台发送。",
+        "draftId": "draft:1791869452970:3"
+      },
+      {
+        "id": "simulation-event:24",
+        "at": 1791869457970,
+        "kind": "sent",
+        "platform": "weibo",
+        "messageIds": [
+          "same-id-five-scopes"
+        ],
+        "reasons": [],
+        "detail": "内存模拟连接器已接受回复；没有向真实平台发送。",
+        "draftId": "draft:1791869452970:4"
+      },
+      {
+        "id": "simulation-event:25",
+        "at": 1791869457970,
+        "kind": "sent",
+        "platform": "whatsapp",
+        "messageIds": [
+          "same-id-five-scopes"
+        ],
+        "reasons": [],
+        "detail": "内存模拟连接器已接受回复；没有向真实平台发送。",
+        "draftId": "draft:1791869452970:5"
+      }
+    ],
+    "rules": {
+      "qq": {
+        "id": "default:simulation:qq",
+        "accountId": "simulation:qq",
+        "mode": "auto",
+        "enabled": true,
+        "cooldownMs": 30000,
+        "allowedKinds": [
+          "text",
+          "image",
+          "audio"
+        ],
+        "autoAuthorized": true,
+        "replyTiming": {
+          "mode": "fixed",
+          "delayMs": 5000
+        }
+      },
+      "wechat": {
+        "id": "default:simulation:wechat",
+        "accountId": "simulation:wechat",
+        "mode": "auto",
+        "enabled": true,
+        "cooldownMs": 30000,
+        "allowedKinds": [
+          "text",
+          "image",
+          "audio"
+        ],
+        "autoAuthorized": true,
+        "replyTiming": {
+          "mode": "fixed",
+          "delayMs": 5000
+        }
+      },
+      "bilibili": {
+        "id": "default:simulation:bilibili",
+        "accountId": "simulation:bilibili",
+        "mode": "auto",
+        "enabled": true,
+        "cooldownMs": 30000,
+        "allowedKinds": [
+          "text",
+          "image",
+          "audio"
+        ],
+        "autoAuthorized": true,
+        "replyTiming": {
+          "mode": "fixed",
+          "delayMs": 5000
+        }
+      },
+      "weibo": {
+        "id": "default:simulation:weibo",
+        "accountId": "simulation:weibo",
+        "mode": "auto",
+        "enabled": true,
+        "cooldownMs": 30000,
+        "allowedKinds": [
+          "text",
+          "image",
+          "audio"
+        ],
+        "autoAuthorized": true,
+        "replyTiming": {
+          "mode": "fixed",
+          "delayMs": 5000
+        }
+      },
+      "whatsapp": {
+        "id": "default:simulation:whatsapp",
+        "accountId": "simulation:whatsapp",
+        "mode": "auto",
+        "enabled": true,
+        "cooldownMs": 30000,
+        "allowedKinds": [
+          "text",
+          "image",
+          "audio"
+        ],
+        "autoAuthorized": true,
+        "replyTiming": {
+          "mode": "fixed",
+          "delayMs": 5000
+        }
+      }
+    },
+    "schedules": []
+  },
+  "realGenerationCompletedPlatforms": 5,
+  "simulatedAcceptedPlatforms": 5,
+  "nearFullBudget": {
+    "inputTokens": 12759,
+    "outputReserve": 32,
+    "total": 12791,
+    "contextSize": 12800
+  },
+  "failure": {
+    "code": "VALIDATION",
+    "message": "fetch failed"
+  },
+  "generations": [
+    {
+      "platform": "qq",
+      "incoming": [
+        "周末一起吃个饭？"
+      ],
+      "tokenizerInputTokens": 300,
+      "inputMatchesTokenizer": true,
+      "result": {
+        "text": "谢啦，我确认一下周末的安排再回你～",
+        "inputTokens": 300,
+        "outputTokens": 13,
+        "tokensPerSecond": 11.519896781724837,
+        "contextSize": 12800,
+        "elapsedMs": 6645,
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 300,
+          "prompt_ms": 5599.092,
+          "prompt_per_token_ms": 18.663639999999997,
+          "prompt_per_second": 53.58011620455603,
+          "predicted_n": 13,
+          "predicted_ms": 1041.676,
+          "predicted_per_token_ms": 86.80633333333333,
+          "predicted_per_second": 11.519896781724837
+        }
+      }
+    },
+    {
+      "platform": "wechat",
+      "incoming": [
+        "最近忙吗？有空聊聊。"
+      ],
+      "tokenizerInputTokens": 302,
+      "inputMatchesTokenizer": true,
+      "result": {
+        "text": "最近还好，就是有点忙。谢谢想着我，你想聊点什么呢？",
+        "inputTokens": 302,
+        "outputTokens": 17,
+        "tokensPerSecond": 9.773140965341998,
+        "contextSize": 12800,
+        "elapsedMs": 6681,
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 302,
+          "prompt_ms": 5038.013,
+          "prompt_per_token_ms": 16.68216225165563,
+          "prompt_per_second": 59.944267710305624,
+          "predicted_n": 17,
+          "predicted_ms": 1637.14,
+          "predicted_per_token_ms": 102.32125,
+          "predicted_per_second": 9.773140965341998
+        }
+      }
+    },
+    {
+      "platform": "bilibili",
+      "incoming": [
+        "你分享的视频很有意思，谢谢！"
+      ],
+      "tokenizerInputTokens": 302,
+      "inputMatchesTokenizer": true,
+      "result": {
+        "text": "谢啦，视频确实挺有意思的，你也觉得精彩就好～",
+        "inputTokens": 302,
+        "outputTokens": 15,
+        "tokensPerSecond": 10.10822296718221,
+        "contextSize": 12800,
+        "elapsedMs": 6588,
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 302,
+          "prompt_ms": 5197.355,
+          "prompt_per_token_ms": 17.209784768211918,
+          "prompt_per_second": 58.1064791610348,
+          "predicted_n": 15,
+          "predicted_ms": 1385.011,
+          "predicted_per_token_ms": 98.92935714285714,
+          "predicted_per_second": 10.10822296718221
+        }
+      }
+    },
+    {
+      "platform": "weibo",
+      "incoming": [
+        "看到你发的照片了，拍得很好。"
+      ],
+      "tokenizerInputTokens": 303,
+      "inputMatchesTokenizer": true,
+      "result": {
+        "text": "谢啦，我确认一下再回你～",
+        "inputTokens": 303,
+        "outputTokens": 11,
+        "tokensPerSecond": 13.626280189023758,
+        "contextSize": 12800,
+        "elapsedMs": 5465,
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 303,
+          "prompt_ms": 4727.496,
+          "prompt_per_token_ms": 15.60229702970297,
+          "prompt_per_second": 64.09312667847841,
+          "predicted_n": 11,
+          "predicted_ms": 733.876,
+          "predicted_per_token_ms": 73.38759999999999,
+          "predicted_per_second": 13.626280189023758
+        }
+      }
+    },
+    {
+      "platform": "whatsapp",
+      "incoming": [
+        "Hi! Are you free to chat this weekend?"
+      ],
+      "tokenizerInputTokens": 305,
+      "inputMatchesTokenizer": true,
+      "result": {
+        "text": "谢谢想着我，我先看看周末的安排，你想聊些什么呀？",
+        "inputTokens": 305,
+        "outputTokens": 15,
+        "tokensPerSecond": 11.112134132983671,
+        "contextSize": 12800,
+        "elapsedMs": 6317,
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 305,
+          "prompt_ms": 5053.12,
+          "prompt_per_token_ms": 16.567606557377047,
+          "prompt_per_second": 60.35874865429675,
+          "predicted_n": 15,
+          "predicted_ms": 1259.884,
+          "predicted_per_token_ms": 89.99171428571428,
+          "predicted_per_second": 11.112134132983671
+        }
+      }
+    }
+  ],
+  "peakRssKiB": 9014064
+}

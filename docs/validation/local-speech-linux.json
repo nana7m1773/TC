@@ -1,0 +1,61 @@
+{
+  "verifiedAt": "2026-10-12T03:27:45.095Z",
+  "host": {
+    "platform": "linux",
+    "cpu": "AMD EPYC 9V45 96-Core Processor",
+    "logicalCpus": 4,
+    "totalMemoryBytes": 35743784960,
+    "availableMemoryBeforeBytes": 34498162688
+  },
+  "engine": {
+    "project": "whisper.cpp",
+    "version": "v1.8.7",
+    "commit": "48f628a84833905ee4a0658ee6d4a5c915ce1997",
+    "url": "https://github.com/ggml-org/whisper.cpp",
+    "license": "MIT",
+    "licenseUrl": "https://github.com/ggml-org/whisper.cpp/blob/v1.8.7/LICENSE",
+    "backend": "CPU",
+    "threads": 4,
+    "androidDecoding": "beam-search",
+    "androidBeamSize": 3
+  },
+  "model": {
+    "id": "whisper-base-multilingual",
+    "sha256": "60ed5bc3dd14eea856493d334349b405782ddcaf0028d4b5df4088345fba2efe"
+  },
+  "beamSize": 3,
+  "cases": [
+    {
+      "id": "english",
+      "source": "https://github.com/ggml-org/whisper.cpp/blob/v1.8.7/samples/jfk.wav",
+      "sha256": "59dfb9a4acb36fe2a2affc14bacbee2920ff435cb13cc314a08c13f66ba7860e",
+      "elapsedMs": 27842,
+      "result": {
+        "text": "And so my fellow Americans ask not what your country can do for you, ask what you can do for your country.",
+        "language": "en",
+        "durationSeconds": 11,
+        "processingLocation": "local",
+        "requiresReview": true,
+        "warning": "请核对并修正转写内容；语音识别可能误听，不会直接把转写当作可靠事实。"
+      }
+    },
+    {
+      "id": "chinese",
+      "source": "https://huggingface.co/csukuangfj/sherpa-onnx-sense-voice-zh-en-ja-ko-yue-2024-07-17/resolve/2365baeacb507f821a0c8120fcee3d484dba7a07/test_wavs/zh.wav",
+      "sha256": "b77f1794fe374a0ba1ee1dc458bfaf9349496cbbfc32780c50ba3c5a7ad8e373",
+      "elapsedMs": 4399,
+      "result": {
+        "text": "開放時間早上九點至下午五點",
+        "language": "zh",
+        "durationSeconds": 5.592,
+        "processingLocation": "local",
+        "requiresReview": true,
+        "warning": "请核对并修正转写内容；语音识别可能误听，不会直接把转写当作可靠事实。"
+      }
+    }
+  ],
+  "limitations": [
+    "Linux 云机测试，不能替代 Windows 运行验证或 8 GB Android 实机验收。",
+    "未测试设备温度、30 分钟连续交互、后台恢复或真实平台联调。"
+  ]
+}

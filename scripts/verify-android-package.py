@@ -1,5 +1,5 @@
 """Verify the built APK against current UI and platform manifests; this is not a device test."""
-import hashlib, json, subprocess, struct
+import hashlib, json, subprocess, struct, os
 from pathlib import Path
 from zipfile import ZipFile
 
@@ -34,7 +34,7 @@ with ZipFile(apk) as archive:
         alignments=[struct.unpack_from('<Q',elf,offset+i*size+48)[0] for i in range(count) if struct.unpack_from('<I',elf,offset+i*size)[0]==1]
         assert alignments and all(value>=16384 and value&(value-1)==0 for value in alignments), f'ELF 16KiB alignment failed: {name}'
         elf_alignment[name]=alignments
-tooling = Path('/workspace/.tooling/android-sdk/build-tools/35.0.0')
+tooling = Path(os.environ.get('TC_TOOLING_DIR','/workspace/.tooling')) / 'android-sdk/build-tools/35.0.0'
 signature = subprocess.run([str(tooling / 'apksigner'), 'verify', '--verbose', '--print-certs', str(apk)], check=True, capture_output=True, text=True).stdout
 subprocess.run([str(tooling / 'zipalign'), '-c', '-P', '16', '-v', '4', str(apk)], check=True, capture_output=True)
 metadata = subprocess.run([str(tooling / 'aapt'), 'dump', 'badging', str(apk)], check=True, capture_output=True, text=True).stdout

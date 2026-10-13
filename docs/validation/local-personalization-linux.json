@@ -1,0 +1,107 @@
+{
+  "verifiedAt": "2026-10-12T03:32:20.928Z",
+  "host": {
+    "platform": "linux",
+    "cpu": "AMD EPYC 9V45 96-Core Processor",
+    "totalMemoryBytes": 35743784960
+  },
+  "model": {
+    "id": "qwen35-2b-hauhaucs-q4-k-m",
+    "sha256": "be3ccca13a9d1bc8b67165ea80bd103cd6151a37ad131183cc7ca388f78d9517"
+  },
+  "method": "Exact production buildPrompt, confirmed examples and identical public synthetic peer message. Local CPU, no external model API.",
+  "cases": [
+    {
+      "id": "formal",
+      "profile": {
+        "tone": "礼貌、正式、完整句子，不使用表情或波浪号。",
+        "commonPhrases": [
+          "感谢你的提醒"
+        ],
+        "principles": [
+          "事实不足时先追问"
+        ],
+        "neverCommit": [
+          "替本人作出重要承诺",
+          "透露密码、验证码或私人资料"
+        ],
+        "examples": [
+          {
+            "id": "formal-example",
+            "received": "谢谢你提醒我，今天辛苦了。",
+            "reply": "感谢你的提醒，也谢谢你的关心。",
+            "note": "正式、简洁地表达感谢，不作承诺。",
+            "confirmed": true
+          }
+        ],
+        "versions": []
+      },
+      "tokenizerCount": 269,
+      "result": {
+        "text": "感谢你的提醒，也谢谢你的关心。",
+        "inputTokens": 269,
+        "outputTokens": 10,
+        "tokensPerSecond": 37.284526507226985,
+        "contextSize": 12800,
+        "elapsedMs": 1374,
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 269,
+          "prompt_ms": 1127.839,
+          "prompt_per_token_ms": 4.192710037174721,
+          "prompt_per_second": 238.50921984432176,
+          "predicted_n": 10,
+          "predicted_ms": 241.387,
+          "predicted_per_token_ms": 26.820777777777778,
+          "predicted_per_second": 37.284526507226985
+        }
+      }
+    },
+    {
+      "id": "casual",
+      "profile": {
+        "tone": "朋友之间的随意口语，短句，可以使用波浪号。",
+        "commonPhrases": [
+          "谢啦"
+        ],
+        "principles": [
+          "事实不足时先追问"
+        ],
+        "neverCommit": [
+          "替本人作出重要承诺",
+          "透露密码、验证码或私人资料"
+        ],
+        "examples": [
+          {
+            "id": "casual-example",
+            "received": "谢谢你提醒我，今天辛苦了。",
+            "reply": "谢啦，你也辛苦啦～",
+            "note": "朋友间轻松表达，不编造经历或安排。",
+            "confirmed": true
+          }
+        ],
+        "versions": []
+      },
+      "tokenizerCount": 266,
+      "result": {
+        "text": "谢啦，你也辛苦啦～",
+        "inputTokens": 266,
+        "outputTokens": 8,
+        "tokensPerSecond": 39.90195519580459,
+        "contextSize": 12800,
+        "elapsedMs": 1245,
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 266,
+          "prompt_ms": 1024.48,
+          "prompt_per_token_ms": 3.8514285714285714,
+          "prompt_per_second": 259.6439169139466,
+          "predicted_n": 8,
+          "predicted_ms": 175.43,
+          "predicted_per_token_ms": 25.06142857142857,
+          "predicted_per_second": 39.90195519580459
+        }
+      }
+    }
+  ]
+}

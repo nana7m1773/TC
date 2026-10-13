@@ -1,0 +1,11 @@
+{
+  "date": "2026-10-13",
+  "platform": "Linux cloud Node 24 WebCrypto, browser window shim only",
+  "function": "production encryptExport/decryptExport",
+  "plaintextTextBytes": 15728640,
+  "encryptedEnvelopeBytes": 20971668,
+  "over20MBRoundtripPassed": true,
+  "over16MiBPlaintextRejected": true,
+  "encryptedImportLimitBytes": 33554432,
+  "nativeFilePickerTested": false
+}
