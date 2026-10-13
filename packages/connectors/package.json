@@ -1,0 +1,8 @@
+{
+  "name": "@tc/connectors",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": { ".": "./src/qq-bot.ts" },
+  "scripts": { "test": "tsx --test tests/*.test.ts" }
+}

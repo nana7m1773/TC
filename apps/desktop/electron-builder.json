@@ -1,0 +1,74 @@
+{
+  "appId": "cn.tc.assistant",
+  "productName": "L-BOT",
+  "asar": true,
+  "electronDownload": {
+    "cache": ".cache/electron"
+  },
+  "directories": {
+    "output": "artifacts/windows",
+    "buildResources": "apps/desktop/resources"
+  },
+  "files": [
+    "dist/**/*",
+    "apps/desktop/main.cjs",
+    "apps/desktop/preload.cjs",
+    "packages/runtime/**/*.mjs",
+    "scripts/prepare-model.mjs",
+    "resources/default-model.json",
+    "resources/default-model.windows.json",
+    "resources/local-speech.json",
+    "package.json",
+    "LICENSE",
+    "apps/desktop/windows-ui.ps1"
+  ],
+  "extraResources": [
+    {
+      "from": "apps/desktop/resources/engines/win-x64",
+      "to": "engines/win-x64",
+      "filter": [
+        "**/*",
+        "!**/.*.staging-*/**",
+        "!**/.*.previous-*/**"
+      ]
+    },
+    {
+      "from": "apps/desktop/resources/engines/whisper-win-x64",
+      "to": "engines/whisper-win-x64",
+      "filter": [
+        "**/*",
+        "!**/.*.staging-*/**",
+        "!**/.*.previous-*/**"
+      ]
+    }
+  ],
+  "win": {
+    "target": [
+      {
+        "target": "nsis",
+        "arch": [
+          "x64"
+        ]
+      }
+    ],
+    "signAndEditExecutable": false,
+    "artifactName": "L-BOT-Setup-${version}-${arch}.${ext}"
+  },
+  "nsis": {
+    "oneClick": false,
+    "allowToChangeInstallationDirectory": false,
+    "perMachine": false,
+    "createDesktopShortcut": true,
+    "createStartMenuShortcut": true,
+    "deleteAppDataOnUninstall": false,
+    "script": "apps/desktop/installer.nsi",
+    "installerLanguages": [
+      "zh_CN"
+    ],
+    "language": "2052"
+  },
+  "publish": null,
+  "asarUnpack": [
+    "apps/desktop/windows-ui.ps1"
+  ]
+}

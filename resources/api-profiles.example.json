@@ -1,0 +1,5 @@
+[
+  {"id":"deepseek-example","name":"DeepSeek","protocol":"openai","baseUrl":"https://api.deepseek.com/v1","modelId":"deepseek-chat","contextSize":12800,"maxTokens":768,"temperature":0.6,"timeoutMs":60000,"stream":false,"headers":{},"extra":{},"capabilities":{"text":true,"image":false,"audio":false}},
+  {"id":"doubao-example","name":"豆包 / 火山方舟","protocol":"openai","baseUrl":"https://ark.cn-beijing.volces.com/api/v3","modelId":"填写实际模型ID或接入点ID","contextSize":12800,"maxTokens":768,"temperature":0.6,"timeoutMs":60000,"stream":false,"headers":{},"extra":{},"capabilities":{"text":true,"image":false,"audio":false}},
+  {"id":"qwen-example","name":"千问 / 阿里云百炼","protocol":"openai","baseUrl":"https://dashscope.aliyuncs.com/compatible-mode/v1","modelId":"qwen-plus","contextSize":12800,"maxTokens":768,"temperature":0.6,"timeoutMs":60000,"stream":false,"headers":{},"extra":{},"capabilities":{"text":true,"image":false,"audio":false}}
+]

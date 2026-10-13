@@ -1,0 +1,40 @@
+{
+  "name": "l-bot",
+  "version": "0.2.0",
+  "private": true,
+  "description": "L-BOT：本地 AI 社交助理，确认式表达学习、多模态理解与可追溯上下文压缩",
+  "type": "module",
+  "main": "apps/desktop/main.cjs",
+  "scripts": {
+    "dev": "vite --host 0.0.0.0",
+    "build": "tsc --noEmit && vite build",
+    "test": "tsx --test packages/core/tests/*.test.ts packages/runtime/tests/*.test.ts packages/connectors/tests/*.test.ts packages/simulation/tests/*.test.ts",
+    "test:simulation": "tsx --test packages/simulation/tests/*.test.ts",
+    "simulate": "tsx scripts/run-simulations.mts",
+    "desktop": "electron .",
+    "build:windows": "node scripts/build-windows.mjs",
+    "build:android": "bash scripts/build-android.sh",
+    "verify": "npm run build && npm test",
+    "test:ui": "playwright test --config tests/playwright.config.ts"
+  },
+  "dependencies": {
+    "@capacitor/android": "7.6.9",
+    "@capacitor/core": "7.6.9",
+    "lucide-react": "0.468.0",
+    "react": "19.0.0",
+    "react-dom": "19.0.0"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "7.6.9",
+    "@playwright/test": "1.56.1",
+    "@types/node": "22.10.2",
+    "@types/react": "19.0.3",
+    "@types/react-dom": "19.0.2",
+    "@vitejs/plugin-react": "4.3.4",
+    "electron": "44.7.0",
+    "electron-builder": "26.15.3",
+    "tsx": "4.23.15",
+    "typescript": "5.7.2",
+    "vite": "6.4.4"
+  }
+}

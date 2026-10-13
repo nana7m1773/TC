@@ -1,0 +1,4 @@
+[
+  {"id":"sample-peer-1","authorId":"friend","scope":{"accountId":"manual","conversationId":"lin","contactId":"lin"},"text":"周六想去摄影展，你有空吗？","createdAt":1},
+  {"id":"sample-self-1","authorId":"me","scope":{"accountId":"manual","conversationId":"lin","contactId":"lin"},"text":"听起来不错！你想几点去？我先确认一下安排。","createdAt":2}
+]

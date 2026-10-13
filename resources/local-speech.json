@@ -1,0 +1,32 @@
+{
+  "id": "whisper-base-multilingual",
+  "name": "Whisper Base 多语言语音识别",
+  "filename": "ggml-base.bin",
+  "url": "https://huggingface.co/ggerganov/whisper.cpp/resolve/5359861c739e955e79d9a303bcbc70fb988958b1/ggml-base.bin",
+  "sha256": "60ed5bc3dd14eea856493d334349b405782ddcaf0028d4b5df4088345fba2efe",
+  "sizeBytes": 147951465,
+  "requiredStorageBytes": 350000000,
+  "format": "whisper-ggml",
+  "languages": ["zh", "en", "auto"],
+  "maxAudioBytes": 20971520,
+  "maxAudioSeconds": 120,
+  "sampleRate": 16000,
+  "source": "https://huggingface.co/ggerganov/whisper.cpp",
+  "sourceRevision": "5359861c739e955e79d9a303bcbc70fb988958b1",
+  "checksumSource": "https://huggingface.co/api/models/ggerganov/whisper.cpp/revision/5359861c739e955e79d9a303bcbc70fb988958b1?blobs=true",
+  "license": "MIT",
+  "licenseUrl": "https://github.com/openai/whisper/blob/main/LICENSE",
+  "sourceBuild": {
+    "project": "whisper.cpp",
+    "version": "v1.8.7",
+    "commit": "48f628a84833905ee4a0658ee6d4a5c915ce1997",
+    "url": "https://github.com/ggml-org/whisper.cpp",
+    "license": "MIT",
+    "licenseUrl": "https://github.com/ggml-org/whisper.cpp/blob/v1.8.7/LICENSE",
+    "backend": "CPU",
+    "threads": 4,
+    "androidDecoding": "beam-search",
+    "androidBeamSize": 3
+  },
+  "verification": "Model revision, byte size and SHA-256 verified against publisher LFS metadata; downloaded model independently verified in cloud. Short Chinese/English samples transcribed with the JNI implementation on a Linux host; transcriptions require user review. Android codec/microphone runtime and 8 GB device memory acceptance remain pending."
+}
