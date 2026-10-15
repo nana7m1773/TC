@@ -1,8 +1,10 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
+import {spawn} from 'node:child_process';
+import path from 'node:path';
 import {createHash} from 'node:crypto';
-import {createWindowsUiReader, listSocialWindows, readSocialWindow, captureSocialWindow, prepareSocialReply, commitSocialReply, WindowsUiError} from '../windows-ui.mjs';
+import {createWindowsUiReader, listSocialWindows, readSocialWindow, captureSocialWindow, prepareSocialReply, commitSocialReply, activateSocialWindow, WindowsUiError} from '../windows-ui.mjs';
 
 // These explicitly injected execution substitutes validate the JSON protocol and rejection paths.
 // They do not run PowerShell, capture a real window, or demonstrate any real app's UIA support.
@@ -33,6 +35,7 @@ test('Linux is explicitly unsupported and never runs the PowerShell substitute',
   await assert.rejects(reader.listSocialWindows(), {code: 'WINDOWS_UI_UNSUPPORTED'});
   await assert.rejects(reader.readSocialWindow({consent: true}), {code: 'WINDOWS_UI_UNSUPPORTED'});
   await assert.rejects(reader.captureSocialWindow({consent: true}), {code: 'WINDOWS_UI_UNSUPPORTED'});
+  await assert.rejects(reader.activateSocialWindow({consent: true}), {code: 'WINDOWS_UI_UNSUPPORTED'});
   await assert.rejects(reader.prepareSocialReply({consent: true}), {code: 'WINDOWS_UI_UNSUPPORTED'});
   await assert.rejects(reader.commitSocialReply({consent: true}), {code: 'WINDOWS_UI_UNSUPPORTED'});
   assert.equal(executions, 0);
@@ -40,6 +43,7 @@ test('Linux is explicitly unsupported and never runs the PowerShell substitute',
     await assert.rejects(listSocialWindows(), {code: 'WINDOWS_UI_UNSUPPORTED'});
     await assert.rejects(readSocialWindow({consent: true}), {code: 'WINDOWS_UI_UNSUPPORTED'});
     await assert.rejects(captureSocialWindow({consent: true}), {code: 'WINDOWS_UI_UNSUPPORTED'});
+    await assert.rejects(activateSocialWindow({consent: true}), {code: 'WINDOWS_UI_UNSUPPORTED'});
     await assert.rejects(prepareSocialReply({consent: true}), {code: 'WINDOWS_UI_UNSUPPORTED'});
     await assert.rejects(commitSocialReply({consent: true}), {code: 'WINDOWS_UI_UNSUPPORTED'});
   }
@@ -81,7 +85,7 @@ test('expired selection is rejected before executing a read', async () => {
   const reader = createWindowsUiReader({platform: 'win32', now: () => clock,
     executePowerShell: async () => { executions++; return output({ok: true, windows: [windowIdentity]}); }});
   const selected = (await reader.listSocialWindows()).windows[0];
-  clock += 5 * 60 * 1000 + 1;
+  clock += 30 * 60 * 1000 + 1;
   await assert.rejects(reader.readSocialWindow({...selected, consent: true, expectedTitle: selected.title}), {code: 'WINDOWS_UI_SELECTION'});
   assert.equal(executions, 1);
 });
@@ -127,7 +131,7 @@ test('handle, process, pid, process creation time and title changes before/after
 });
 
 test('unavailable UIA reports a real limitation, with no invented message', async () => {
-  for (const result of [{ok: false, code: 'WINDOWS_UI_UNAVAILABLE', message: 'private password'}, readResult({text: '', controls: []})]) {
+  for (const result of [{ok: false, code: 'WINDOWS_UI_UNAVAILABLE', message: 'private password'}]) {
     const {reader} = fixture(result);
     const selected = (await reader.listSocialWindows()).windows[0];
     await assert.rejects(reader.readSocialWindow({...selected, consent: true, expectedTitle: selected.title}),
@@ -167,8 +171,8 @@ test('a refreshed enumeration invalidates an in-flight read before its content c
   await assert.rejects(pendingRead, {code: 'WINDOWS_UI_SELECTION'});
 });
 
-test('malformed list identities, duplicate handles and unlisted processes are rejected', async () => {
-  for (const windows of [[{...windowIdentity, process: 'powershell'}], [{...windowIdentity, kind: 'browser'}],
+test('malformed list identities, duplicate handles and invalid process metadata are rejected', async () => {
+  for (const windows of [[{...windowIdentity, process: 'bad/process'}], [{...windowIdentity, kind: 'browser'}],
     [{...windowIdentity, handle: '$(bad)'}], [{...windowIdentity, processId: -1}],
     [{...windowIdentity}, {...windowIdentity}], Array.from({length: 101}, () => windowIdentity)]) {
     const {reader} = fixture(readResult(), windows);
@@ -241,7 +245,7 @@ test('capture rejects expired selections and in-flight refresh without returning
       return new Promise(resolve => { completeCapture = resolve; });
     }});
   const expired = (await reader.listSocialWindows()).windows[0];
-  clock += 5 * 60 * 1000 + 1;
+  clock += 30 * 60 * 1000 + 1;
   await assert.rejects(reader.captureSocialWindow({...expired, consent: true, expectedTitle: expired.title}), {code: 'WINDOWS_UI_SELECTION'});
   assert.equal(executions, 1);
   const selected = (await reader.listSocialWindows()).windows[0];
@@ -300,25 +304,22 @@ test('capture failure/protection/dimension errors are generic and never fall bac
   }
 });
 
-test('fixed local script bounds capture/read and permits only confirmed ValuePattern/InvokePattern actions', async () => {
+test('fixed local runner confines keyboard and capture to selected verified windows', async () => {
   const module = await readFile(new URL('../windows-ui.mjs', import.meta.url), 'utf8');
   const script = await readFile(new URL('../../../apps/desktop/windows-ui.ps1', import.meta.url), 'utf8');
-  assert.equal(script.charCodeAt(0), 0xFEFF, 'WinPS5.1 needs a BOM to decode Chinese publisher names');
+  assert.equal(script.charCodeAt(0), 0xFEFF, 'WinPS5.1 needs a BOM for Chinese labels');
   assert.match(module, /WindowsPowerShell.*v1\.0.*powershell\.exe/);
   assert.match(module, /shell: false/);
   assert.match(module, /child\.stdin\.end\(input, 'utf8'\)/);
   assert.match(script, /CACHE_ONLY_URL_RETRIEVAL/);
-  assert.doesNotMatch(script, /\b(Get-AuthenticodeSignature|Invoke-WebRequest|Invoke-RestMethod|Start-Process|SetFocus|SetForegroundWindow|SendKeys|SendInput|Get-Clipboard|Set-Clipboard|Clipboard|mouse_event|keybd_event)\b/);
-  assert.doesNotMatch(script, /FindAll\s*\(|DocumentRange|GetText\s*\(/);
+  assert.doesNotMatch(script, /\b(Get-AuthenticodeSignature|Invoke-WebRequest|Invoke-RestMethod|Start-Process|SendKeys|Get-Clipboard|Set-Clipboard|Clipboard|mouse_event|keybd_event)\b/);
+  assert.doesNotMatch(script, /FindAll\s*\(/);
   assert.ok(script.indexOf('IsPasswordProperty') < script.indexOf('NameProperty'));
-  assert.equal((script.match(/\.SetValue\(/g) || []).length, 1);
-  assert.equal((script.match(/\.Invoke\(/g) || []).length, 1);
-  assert.match(script, /\$access\.valuePattern\.SetValue\(\[string\]\$request\.text\)/);
-  assert.match(script, /\$written\.invokePattern\.Invoke\(\)/);
-  assert.match(script, /\$editors\.Count -ne 1 -or \$buttons\.Count -ne 1/);
-  assert.match(script, /GetForegroundWindow\(\) -eq \$windowHandle/);
-  assert.match(script, /HasKeyboardFocusProperty/);
-  assert.match(script, /Current\.Value -cne \$expectedValue/);
+  assert.match(script, /Owner\(hwnd\) != ownerId \|\| GetForegroundWindow\(\) != hwnd/);
+  assert.match(script, /String\.Join\(",", focused\.GetRuntimeId\(\)\) != editorId/);
+  assert.match(script, /AssertFocusedEditor\(hwnd, ownerId, editorId\)/);
+  assert.match(script, /AssertNoModifiers\(\)/);
+  assert.match(script, /Get-EditorText \$access\) -cne \$expectedValue/);
   assert.match(script, /no UIA atomic compare-and-set/);
   assert.match(script, /ToUnixTimeMilliseconds\(\) -ge \$request\.expiresAt/);
   assert.match(script, /\$writeStarted -eq \$true.*WINDOWS_UI_REPLY_INTERRUPTED/);
@@ -329,11 +330,11 @@ test('fixed local script bounds capture/read and permits only confirmed ValuePat
   assert.match(script, /Assert-Identity \$before \$expected/);
   assert.match(script, /Assert-Identity \$after \$expected/);
   assert.match(script, /PrintWindow\(hwnd, context, 2\)/);
-  assert.match(script, /GetWindowDisplayAffinity\(hwnd, out affinity\).*affinity != 0/);
+  assert.match(script, /if \(affinity != 0\) throw new Exception\("WINDOWS_UI_CAPTURE_PROTECTED"\)/);
+  assert.match(script, /!GetWindowDisplayAffinity\(hwnd, out affinity\)\) return "unavailable"/);
   assert.ok(script.indexOf('int[] original = CaptureSize(hwnd)') < script.indexOf('new Bitmap(original[0]'));
   assert.match(script, /graphics\.ReleaseHdc\(context\)/);
   assert.match(script, /new MemoryStream\(\)/);
-  assert.match(script, /Get-Identity \$windowHandle \$true/);
   assert.doesNotMatch(script, /CopyFromScreen|GetDesktopWindow|GetDC\(IntPtr\.Zero\)|\.Save\s*\(\s*['"]|WriteAllBytes|Out-File|Set-Content/);
 });
 
@@ -377,7 +378,7 @@ test('read provides a deterministic bounded snapshot, capability, fingerprint an
     controls.map(control => control.name).join('\n'), '0', binding.inputFingerprint,
     ...controls.flatMap(control => [control.type, control.name])];
   assert.equal(preview.snapshot, createHash('sha256').update(snapshotParts.join('\0'), 'utf8').digest('hex'));
-  assert.deepEqual(preview.capability, {canSend: true, reason: '', reasonCode: null});
+  assert.deepEqual(preview.capability, {canRead: true, canCapture: true, canType: true, canSend: true, reason: '', reasonCode: null});
   assert.equal(preview.inputFingerprint, binding.inputFingerprint);
   assert.equal(preview.binding, undefined, 'native RuntimeIds are not exposed to the renderer');
   assert.deepEqual(preview.input, {method: 'uia-value-pattern', imeBypassed: true, imeLayout: '0x8040804',
@@ -487,7 +488,7 @@ test('changed conversation text, truncation, visible control ordering or editor 
   }
 });
 
-test('empty draft, unique editor/button capability and current focus refusal must pass at prepare and commit', async () => {
+test('empty draft and verified selected editor capability must pass at prepare and commit', async () => {
   for (const code of ['WINDOWS_UI_DRAFT_PRESENT', 'WINDOWS_UI_DRAFT_CHANGED', 'WINDOWS_UI_UNSUPPORTED_INPUT']) {
     const {reader} = sendFixture(request => request.operation === 'prepare'
       ? sendableResult({reply: {...reply, canSend: false, reasonCode: code}}) : sendableResult());
@@ -582,4 +583,197 @@ test('refresh during an already invoked commit reports interruption and retains 
   await assert.rejects(pending, {code: 'WINDOWS_UI_REPLY_INTERRUPTED'});
   await assert.rejects(reader.commitSocialReply({ticket: prepared.ticket, consent: true}), {code: 'WINDOWS_UI_TICKET'});
   assert.equal(requests.filter(request => request.operation === 'commit').length, 1);
+});
+
+test('owner-selected unsigned application windows keep stable process identity and advisory signatures', async () => {
+  const application = {...windowIdentity, process: '自定义聊天 (desktop)', kind: 'application',
+    signature: {status: 'unverified', publisher: null}};
+  const {reader, requests} = fixture(readResult({before: application, after: application}), [application]);
+  const selected = (await reader.listSocialWindows()).windows[0];
+  assert.deepEqual(selected.signature, {status: 'unverified', publisher: null});
+  const input = {selection: selected.selection, expectedTitle: selected.title, consent: true};
+  assert.equal((await reader.readSocialWindow(input)).process, '自定义聊天 (desktop)');
+  assert.equal(requests[1].window.processId, application.processId);
+  assert.equal(requests[1].window.startedAt, application.startedAt);
+  const invalid = fixture(readResult(), [{...application, signature: {status: 'trusted-by-name', publisher: null}}]);
+  await assert.rejects(invalid.reader.listSocialWindows(), {code: 'WINDOWS_UI_OUTPUT'});
+});
+
+test('empty accessibility text retains a bounded snapshot and input choices without inventing readable messages', async () => {
+  const {reader} = fixture(readResult({text: '', controls: [], canCapture: false}));
+  const {preview} = await selectPreview(reader);
+  assert.equal(preview.text, '');
+  assert.deepEqual(preview.controls, []);
+  assert.equal(preview.capability.canRead, false);
+  assert.equal(preview.capability.canCapture, false);
+  assert.equal(preview.capability.canType, false);
+  assert.match(preview.snapshot, /^[a-f0-9]{64}$/);
+});
+
+const keyboardTarget = {id: 'c'.repeat(64), label: '编辑框 2 · Unicode 键盘 + Ctrl+Enter 发送',
+  method: 'unicode-keyboard', sendAction: 'ctrl-enter'};
+const keyboardReply = {...reply, inputFingerprint: keyboardTarget.id, method: keyboardTarget.method,
+  sendAction: keyboardTarget.sendAction, selectedInputTarget: keyboardTarget.id};
+const keyboardBinding = {editorId: binding.editorId, buttonId: '', inputFingerprint: keyboardTarget.id,
+  targetId: keyboardTarget.id, method: keyboardTarget.method, sendAction: keyboardTarget.sendAction};
+const keyboardResult = (extra:Record<string,unknown> = {}) => sendableResult({reply: {...keyboardReply},
+  inputTargets: [{...keyboardTarget}], binding: {...keyboardBinding}, ...extra});
+const keyboardFixture = (response?: (request:any) => unknown) => sendFixture(request => response ? response(request) :
+  request.operation === 'commit' ? commitResult({reply: {...keyboardReply}}) : keyboardResult());
+
+test('keyboard fallback needs the explicit offered target and binds its exact editor and send action to a single-use ticket', async () => {
+  const {reader, requests} = keyboardFixture();
+  const {input, preview} = await selectPreview(reader);
+  assert.deepEqual(preview.inputTargets, [keyboardTarget]);
+  assert.equal(preview.selectedInputTarget, keyboardTarget.id);
+  assert.equal(preview.input.method, 'unicode-keyboard');
+  const request = {...input, text: '你好 👋', expectedSnapshot: preview.snapshot};
+  await assert.rejects(reader.prepareSocialReply(request), {code: 'WINDOWS_UI_UNSUPPORTED_INPUT'});
+  for (const inputTarget of ['42,7,11', 'not-an-offered-target', {id: keyboardTarget.id}]) {
+    const before = requests.length;
+    await assert.rejects(reader.prepareSocialReply({...request, inputTarget}), {code: 'WINDOWS_UI_UNSUPPORTED_INPUT'});
+    assert.equal(requests.length, before);
+  }
+  const prepared = await reader.prepareSocialReply({...request, inputTarget: keyboardTarget.id});
+  const committed = await reader.commitSocialReply({ticket: prepared.ticket, consent: true,
+    inputTarget: 'd'.repeat(64), sendAction: 'enter', text: 'replacement'});
+  const commit = requests.find(request => request.operation === 'commit');
+  assert.equal(commit.inputTarget, keyboardTarget.id);
+  assert.deepEqual(commit.binding, keyboardBinding);
+  assert.equal(commit.text, request.text);
+  assert.equal(committed.input.method, 'unicode-keyboard');
+  assert.equal(committed.status, 'unknown');
+  await assert.rejects(reader.commitSocialReply({ticket: prepared.ticket, consent: true}), {code: 'WINDOWS_UI_TICKET'});
+});
+
+test('keyboard fallback does not guess newline shortcuts or accept a different native editor/action', async () => {
+  const {reader} = keyboardFixture();
+  const {input, preview} = await selectPreview(reader);
+  for (const text of ['line one\nline two', 'line\rtwo', 'hello\tthere']) {
+    await assert.rejects(reader.prepareSocialReply({...input, inputTarget: keyboardTarget.id,
+      text, expectedSnapshot: preview.snapshot}), {code: 'WINDOWS_UI_KEYBOARD_TEXT'});
+  }
+  const changed = keyboardFixture(request => request.operation === 'prepare'
+    ? keyboardResult({binding: {...keyboardBinding, sendAction: 'enter'}}) : keyboardResult());
+  const selected = await selectPreview(changed.reader);
+  await assert.rejects(changed.reader.prepareSocialReply({...selected.input, inputTarget: keyboardTarget.id,
+    text: '你好', expectedSnapshot: selected.preview.snapshot}), {code: 'WINDOWS_UI_OUTPUT'});
+  const denied = keyboardFixture(request => request.operation === 'commit'
+    ? commitResult({reply: {...keyboardReply, sendAction: 'enter'}}) : keyboardResult());
+  const context = await selectPreview(denied.reader);
+  const prepared = await denied.reader.prepareSocialReply({...context.input, inputTarget: keyboardTarget.id,
+    text: '你好', expectedSnapshot: context.preview.snapshot});
+  await assert.rejects(denied.reader.commitSocialReply({ticket: prepared.ticket, consent: true}), {code: 'WINDOWS_UI_REPLY_INTERRUPTED'});
+});
+
+test('unoffered target IDs, duplicate choices and malformed keyboard capabilities cannot prepare input', async () => {
+  const rejected = [keyboardResult({inputTargets: []}), keyboardResult({inputTargets: [keyboardTarget, keyboardTarget]}),
+    keyboardResult({reply: {...keyboardReply, selectedInputTarget: null}}),
+    keyboardResult({inputTargets: [{...keyboardTarget, method: 'clipboard'}]}),
+    keyboardResult({inputTargets: [{...keyboardTarget, label: 'x'.repeat(201)}]})];
+  for (const result of rejected) {
+    const {reader} = fixture(result);
+    const selected = (await reader.listSocialWindows()).windows[0];
+    await assert.rejects(reader.readSocialWindow({selection: selected.selection, expectedTitle: selected.title,
+      consent: true, inputTarget: keyboardTarget.id}), {code: 'WINDOWS_UI_OUTPUT'});
+  }
+  const {reader} = keyboardFixture();
+  const {input, preview} = await selectPreview(reader);
+  await assert.rejects(reader.readSocialWindow({...input, inputTarget: 'd'.repeat(64)}), {code: 'WINDOWS_UI_UNSUPPORTED_INPUT'});
+  await assert.rejects(reader.prepareSocialReply({...input, inputTarget: 'd'.repeat(64), text: '你好',
+    expectedSnapshot: preview.snapshot}), {code: 'WINDOWS_UI_UNSUPPORTED_INPUT'});
+});
+
+test('window activation requires owner consent and the same current enumerated HWND identity', async () => {
+  const {reader, requests} = fixture({ok: true, before: {...windowIdentity}, after: {...windowIdentity}, activated: true});
+  const selected = (await reader.listSocialWindows()).windows[0];
+  const input = {selection: selected.selection, expectedTitle: selected.title, consent: true};
+  await assert.rejects(reader.activateSocialWindow({...input, consent: false}), {code: 'WINDOWS_UI_CONSENT'});
+  await assert.rejects(reader.activateSocialWindow({...input, selection: selected.handle}), {code: 'WINDOWS_UI_SELECTION'});
+  assert.equal((await reader.activateSocialWindow(input)).activated, true);
+  assert.deepEqual(requests[1], {operation: 'activate', consent: true, window: windowIdentity});
+  await reader.listSocialWindows();
+  await assert.rejects(reader.activateSocialWindow(input), {code: 'WINDOWS_UI_SELECTION'});
+});
+
+test('unavailable capture-protection queries are reported without impersonating confirmed protection', async () => {
+  const {reader} = fixture(captureResult({captureProtection: 'unavailable'}));
+  const selected = (await reader.listSocialWindows()).windows[0];
+  const result = await reader.captureSocialWindow({selection: selected.selection, expectedTitle: selected.title, consent: true});
+  assert.equal(result.captureProtection, 'unavailable');
+  assert.equal(result.image.data, png);
+});
+
+// Opt in only on an interactive Windows desktop. This creates an isolated synthetic WinForms
+// window, never connects a real social account, and uses the real fixed PowerShell/UIA runner.
+test('Windows native UIA and selected Unicode keyboard operate on a two-editor fixture', {
+  skip: process.platform !== 'win32' || process.env.LBOT_WINDOWS_UI_SMOKE !== '1', timeout: 90_000,
+}, async t => {
+  const title = `L-BOT native UIA fixture ${Date.now()}-${process.pid}`;
+  const source = `
+$ErrorActionPreference = 'Stop'
+Add-Type -AssemblyName System.Windows.Forms
+Add-Type -AssemblyName System.Drawing
+$form = New-Object System.Windows.Forms.Form
+$form.Text = '${title}'
+$form.Size = New-Object System.Drawing.Size(660, 450)
+$search = New-Object System.Windows.Forms.TextBox
+$search.Location = New-Object System.Drawing.Point(20, 20)
+$search.Size = New-Object System.Drawing.Size(480, 30)
+$search.AccessibleName = 'Search, not the chat editor'
+$chat = New-Object System.Windows.Forms.TextBox
+$chat.Location = New-Object System.Drawing.Point(20, 260)
+$chat.Size = New-Object System.Drawing.Size(480, 30)
+$chat.AccessibleName = 'Chat editor'
+$status = New-Object System.Windows.Forms.Label
+$status.Text = 'Synthetic conversation ready'
+$status.Location = New-Object System.Drawing.Point(20, 100)
+$status.AutoSize = $true
+$send = New-Object System.Windows.Forms.Button
+$send.Text = 'Send'
+$send.Location = New-Object System.Drawing.Point(520, 260)
+$send.Add_Click({ $status.Text = 'Observed: ' + $chat.Text; $chat.Clear() })
+$form.Controls.AddRange(@($search, $chat, $status, $send))
+$form.Add_Shown({ [Console]::Out.WriteLine('TC_FIXTURE_READY'); [Console]::Out.Flush() })
+[System.Windows.Forms.Application]::Run($form)
+`;
+  const executable = path.win32.join(process.env.SystemRoot || 'C:\\Windows', 'System32',
+    'WindowsPowerShell', 'v1.0', 'powershell.exe');
+  const child = spawn(executable, ['-NoLogo', '-NoProfile', '-NonInteractive', '-STA', '-EncodedCommand',
+    Buffer.from(source, 'utf16le').toString('base64')], {shell: false, windowsHide: false,
+    stdio: ['ignore', 'pipe', 'pipe']});
+  t.after(() => { child.kill(); });
+  await new Promise<void>((resolve, reject) => {
+    let output = '';
+    const timer = setTimeout(() => reject(new Error('Synthetic Windows fixture did not become ready')), 15_000);
+    child.stdout.on('data', chunk => {
+      output += chunk.toString();
+      if (output.includes('TC_FIXTURE_READY')) { clearTimeout(timer); resolve(); }
+    });
+    child.stderr.on('data', () => {});
+    child.once('error', error => { clearTimeout(timer); reject(error); });
+    child.once('exit', () => { clearTimeout(timer); reject(new Error('Synthetic Windows fixture exited early')); });
+  });
+  const reader = createWindowsUiReader();
+  const selected = (await reader.listSocialWindows()).windows.find((window:any) => window.title === title);
+  assert.ok(selected, 'real EnumWindows must find the synthetic titled fixture');
+  const input = {selection: selected.selection, expectedTitle: selected.title, consent: true};
+  const initial = await reader.readSocialWindow(input);
+  assert.ok(initial.inputTargets.filter((target:any) => target.method === 'uia-value-pattern').length >= 2,
+    'both Search and Chat editors must be offered rather than rejecting multiple Edit controls');
+  assert.equal(initial.selectedInputTarget, null, 'two editors require an explicit choice');
+  for (const method of ['uia-value-pattern', 'unicode-keyboard']) {
+    const target = initial.inputTargets.find((target:any) => target.method === method &&
+      target.sendAction === 'button' && target.label.startsWith('编辑框 2 '));
+    assert.ok(target, `the real chat editor must offer ${method}`);
+    const preview = await reader.readSocialWindow({...input, inputTarget: target.id});
+    assert.equal(preview.capability.canSend, true);
+    const text = `${method} 中文 👋`;
+    const prepared = await reader.prepareSocialReply({...input, inputTarget: target.id,
+      text, expectedSnapshot: preview.snapshot});
+    const result = await reader.commitSocialReply({ticket: prepared.ticket, consent: true});
+    assert.equal(result.status, 'unknown');
+    const observed = await reader.readSocialWindow({...input, inputTarget: target.id});
+    assert.ok(observed.text.includes(`Observed: ${text}`), 'the isolated fixture must observe the exact Unicode text');
+  }
 });

@@ -6,7 +6,8 @@ const invoke=(name)=>async(input)=>{
 };
 const methods=['loadState','saveState','saveApiKey','hasApiKey','deleteApiKey','request','models','testConnection','deviceInfo','modelStatus',
   'listModels','installDefault','importModel','loadModel','stop','deleteModel','infer','tokenize','setAutostart','getAutostart','clearCache',
-  'exportProtected','importProtected','deleteHistory','installVision','analyzeImage','installSpeech','transcribeLocal','listSocialWindows','readSocialWindow','captureSocialWindow','prepareSocialReply','commitSocialReply'];
+  'exportProtected','importProtected','deleteHistory','installVision','analyzeImage','installSpeech','transcribeLocal','listSocialWindows','activateSocialWindow','readSocialWindow','captureSocialWindow','prepareSocialReply','commitSocialReply',
+  'getSocialStatus','openSocialApp','requestSocialAccess'];
 const bridge=Object.fromEntries(methods.map(name=>[name,invoke(name)]));
 bridge.platform='desktop';
 bridge.onPause=(callback)=>{

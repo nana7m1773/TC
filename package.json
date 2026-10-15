@@ -1,6 +1,6 @@
 {
   "name": "l-bot",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "private": true,
   "description": "L-BOT：本地 AI 社交助理，确认式表达学习、多模态理解与可追溯上下文压缩",
   "author": "Hebe（主作者）",

@@ -47,8 +47,9 @@ function tagsFrom(text: string): string[] {
 const suggestionLabels = { sentenceLength: "句子长度", punctuation: "标点习惯", emoji: "表情习惯", tone: "表达基调" };
 
 /** Only explicit personal inputs reach the shared retrieval/profile layer; this component performs no model training. */
-export function LearningSettings({ profile, setProfile, scope, notify }: {
+export function LearningSettings({ profile, setProfile, scope, notify, onTryStyle }: {
   profile: StyleProfile; setProfile: (profile: StyleProfile) => void; scope: Scope; notify: (message: string) => void;
+  onTryStyle?: () => void;
 }) {
   const [batch, setBatch] = useState("");
   const [relationship, setRelationship] = useState("");
@@ -163,7 +164,8 @@ export function LearningSettings({ profile, setProfile, scope, notify }: {
           <p>将你确认过的原句与真实回复作为检索示例，并统计可审阅的表达习惯。对方的话、模拟回复和未经确认的 AI 草稿不会自动成为你的表达证据；这项功能不训练模型权重。</p>
         </div>
       </div>
-      <div className="learning-actions"><span className="learning-scope"><LockKeyhole size={12} />当前会话：{scopeLabel}</span></div>
+      <div className="learning-actions"><span className="learning-scope"><LockKeyhole size={12} />当前会话：{scopeLabel}</span>{onTryStyle && <Action secondary onClick={onTryStyle}><Sparkles size={14} />试用我的表达生成回复</Action>}</div>
+      <p className="learning-caption">使用方法：添加并确认本人真实表达 → 保存偏好 → 在「建议与演练」输入一句假设收到的消息，生成符合本人风格的回复。生成需要已准备的本地模型，或已配置并授权上传的 API。</p>
     </section>
 
     <section className="panel" data-testid="original-input-panel">

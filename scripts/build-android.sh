@@ -33,7 +33,8 @@ printf '%s\n' '[]' > apps/android/app/src/main/assets/capacitor.plugins.json
 TASK_GRADLE="${GRADLE_BIN:-gradle}"
 if [[ -x apps/android/gradlew ]]; then TASK_GRADLE=./gradlew; fi
 (cd apps/android && "$TASK_GRADLE" --no-daemon --max-workers=2 assembleDebug)
+TASK_APP_VERSION="$(node -p "JSON.parse(require('node:fs').readFileSync('package.json','utf8')).version")"
 mkdir -p artifacts/android
-cp apps/android/app/build/outputs/apk/debug/app-debug.apk artifacts/android/L-BOT-Android-0.2.0-arm64-debug.apk
-printf '%s\n' "APK: $TASK_REPO/artifacts/android/L-BOT-Android-0.2.0-arm64-debug.apk"
+cp apps/android/app/build/outputs/apk/debug/app-debug.apk artifacts/android/L-BOT-Android-${TASK_APP_VERSION}-arm64-debug.apk
+printf '%s\n' "APK: $TASK_REPO/artifacts/android/L-BOT-Android-${TASK_APP_VERSION}-arm64-debug.apk"
 printf '%s\n' 'Debug-signed arm64 Android APK. Real 8GB device / 12800-token / 30-minute acceptance still required.'

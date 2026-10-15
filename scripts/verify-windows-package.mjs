@@ -34,7 +34,7 @@ try {
   const asar=path.join(application,'resources/app.asar');
   const entries=listPackage(asar);
   const sources=['apps/desktop/main.cjs','apps/desktop/preload.cjs','packages/runtime/openai.mjs','packages/runtime/desktop-models.mjs',
-    'packages/runtime/desktop-speech.mjs','packages/runtime/images.mjs','packages/runtime/windows-ui.mjs','scripts/prepare-model.mjs','resources/default-model.json','resources/default-model.windows.json','resources/local-speech.json'];
+    'packages/runtime/social-sessions.mjs','packages/runtime/desktop-speech.mjs','packages/runtime/images.mjs','packages/runtime/windows-ui.mjs','scripts/prepare-model.mjs','resources/default-model.json','resources/default-model.windows.json','resources/local-speech.json'];
   for(const relative of sources)if(sha(extractFile(asar,relative))!==sha(await fs.readFile(path.join(root,relative))))throw new Error(`打包源码不是最新：${relative}`);
   const windowsScript='apps/desktop/windows-ui.ps1';
   if(sha(await fs.readFile(path.join(application,'resources/app.asar.unpacked',windowsScript)))!==sha(await fs.readFile(path.join(root,windowsScript))))throw new Error('安装器的独立 Windows 窗口操作脚本不是最新。');

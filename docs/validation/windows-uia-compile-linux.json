@@ -1,0 +1,80 @@
+{
+  "recordedAt": "2026-10-15T17:33:38Z",
+  "recordType": "Observed results from checks already completed in this task; not a new validation run.",
+  "host": {
+    "platform": "linux",
+    "os": "Debian GNU/Linux 13 (trixie)",
+    "architecture": "x86_64",
+    "workingDirectory": "/workspace/TC"
+  },
+  "sources": [
+    "apps/desktop/windows-ui.ps1",
+    "packages/runtime/windows-ui.mjs",
+    "packages/runtime/tests/windows-ui.test.ts"
+  ],
+  "nativeWindowsExecuted": false,
+  "realSocialClientsExercised": false,
+  "checks": [
+    {
+      "name": "PowerShell parser and native C# compile",
+      "status": "passed",
+      "exitCode": 0,
+      "command": "XDG_CACHE_HOME=/tmp/tc-powershell/cache XDG_CONFIG_HOME=/tmp/tc-powershell/config XDG_DATA_HOME=/tmp/tc-powershell/data /tmp/tc-powershell/pwsh -NoLogo -NoProfile -NonInteractive -File /tmp/tc-powershell/validate-native.ps1",
+      "tool": {
+        "name": "PowerShell",
+        "version": "7.6.7",
+        "source": "https://github.com/PowerShell/PowerShell/releases/download/v7.6.7/powershell-7.6.7-linux-x64.tar.gz",
+        "verifiedSha256": "6896f9e3a6b0a354bf470835a96da76d2f801cd50dcf047ad7c4563bf93bf431"
+      },
+      "parser": {
+        "tokens": 5202,
+        "errors": 0
+      },
+      "compilation": {
+        "compiler": "Microsoft.CodeAnalysis.CSharp (Roslyn, distributed with PowerShell)",
+        "languageVersion": "C# 5",
+        "targetReferences": "Microsoft .NET Framework 4.8 reference assemblies; Windows UI Automation and System.Drawing API references",
+        "referencePackage": "Microsoft.NETFramework.ReferenceAssemblies.net48 1.0.3",
+        "referencePackageSource": "https://api.nuget.org/v3-flatcontainer/microsoft.netframework.referenceassemblies.net48/1.0.3/microsoft.netframework.referenceassemblies.net48.1.0.3.nupkg",
+        "assemblies": [
+          "mscorlib.dll",
+          "System.dll",
+          "System.Core.dll",
+          "System.Drawing.dll",
+          "WindowsBase.dll",
+          "UIAutomationClient.dll",
+          "UIAutomationTypes.dll"
+        ],
+        "sourceExtraction": "The actual C# here-string from apps/desktop/windows-ui.ps1, without substitute Windows/UIA types.",
+        "output": "DLL emitted to a MemoryStream only; not executed.",
+        "emittedBytes": 12800
+      },
+      "observedOutput": [
+        "PowerShell parser: 5202 tokens, zero errors",
+        "C# 5 compiled against Microsoft .NET Framework 4.8 / Windows UIA reference assemblies: 12800 bytes"
+      ],
+      "validationHelperSource": "$ErrorActionPreference = 'Stop'\n$scriptPath = '/workspace/TC/apps/desktop/windows-ui.ps1'\n$parseErrors = $null; $tokens = $null\n$ast = [System.Management.Automation.Language.Parser]::ParseFile($scriptPath, [ref]$tokens, [ref]$parseErrors)\nif ($parseErrors.Count) { $parseErrors | ForEach-Object { \"$($_.Extent.StartLineNumber): $($_.Message)\" }; exit 1 }\n\"PowerShell parser: $($tokens.Count) tokens, zero errors\"\n$source = [regex]::Match([IO.File]::ReadAllText($scriptPath), \"-TypeDefinition @'\\r?\\n([\\s\\S]*?)\\r?\\n'@\").Groups[1].Value\nif (!$source) { throw 'C# source was not found' }\n[void][Reflection.Assembly]::LoadFrom('/tmp/tc-powershell/Microsoft.CodeAnalysis.dll')\n[void][Reflection.Assembly]::LoadFrom('/tmp/tc-powershell/Microsoft.CodeAnalysis.CSharp.dll')\n$options = [Microsoft.CodeAnalysis.CSharp.CSharpParseOptions]::Default.WithLanguageVersion([Microsoft.CodeAnalysis.CSharp.LanguageVersion]::CSharp5)\n$tree = [Microsoft.CodeAnalysis.CSharp.CSharpSyntaxTree]::ParseText($source, $options, 'TCReadOnlyWindows.cs', [Text.Encoding]::UTF8)\n$referenceRoot = '/tmp/tc-powershell/net48/build/.NETFramework/v4.8'\n$references = @('mscorlib.dll','System.dll','System.Core.dll','System.Drawing.dll','WindowsBase.dll','UIAutomationClient.dll','UIAutomationTypes.dll') | ForEach-Object {\n  [Microsoft.CodeAnalysis.MetadataReference]::CreateFromFile((Join-Path $referenceRoot $_))\n}\n$compilationOptions = [Microsoft.CodeAnalysis.CSharp.CSharpCompilationOptions]::new([Microsoft.CodeAnalysis.OutputKind]::DynamicallyLinkedLibrary)\n$compilation = [Microsoft.CodeAnalysis.CSharp.CSharpCompilation]::Create('TCNativeValidation', [Microsoft.CodeAnalysis.SyntaxTree[]]@($tree), [Microsoft.CodeAnalysis.MetadataReference[]]$references, $compilationOptions)\n$stream = [IO.MemoryStream]::new()\n$result = $compilation.Emit($stream)\n$result.Diagnostics | ForEach-Object { $_.ToString() }\nif (!$result.Success) { exit 1 }\n\"C# 5 compiled against Microsoft .NET Framework 4.8 / Windows UIA reference assemblies: $($stream.Length) bytes\"\n$stream.Dispose()\n"
+    },
+    {
+      "name": "Windows UI runner protocol tests",
+      "status": "passed_with_expected_platform_skip",
+      "exitCode": 0,
+      "command": "node_modules/.bin/tsx --test packages/runtime/tests/windows-ui.test.ts",
+      "tests": 42,
+      "passed": 41,
+      "failed": 0,
+      "cancelled": 0,
+      "skipped": 1,
+      "skippedTest": "Windows native UIA and selected Unicode keyboard operate on a two-editor fixture",
+      "skipReason": "Requires an interactive Windows desktop and explicit LBOT_WINDOWS_UI_SMOKE=1.",
+      "scope": "Injected PowerShell substitutes exercise consent, bounded protocol data, selected window identity, offered input targets, immutable keyboard/editor/action tickets, draft rejection, snapshot changes, capture metadata and no automatic replay."
+    }
+  ],
+  "limitations": [
+    "PowerShell 7 on Linux parsed the script. The production Windows PowerShell 5.1 host was not executed.",
+    "Compiling C# against real Microsoft Windows reference assemblies checks API/type and C# 5 compatibility; it does not execute Win32, UIA, capture, focus or SendInput.",
+    "The 41 passing protocol tests use execution substitutes and do not establish real client behavior.",
+    "The isolated native WinForms smoke test was skipped on Linux. Its UIA and Unicode keyboard assertions remain unverified until an interactive Windows run.",
+    "No QQ, WeChat/Weixin, WhatsApp or other real social client was opened, read, captured, typed into or sent a message during these checks."
+  ]
+}

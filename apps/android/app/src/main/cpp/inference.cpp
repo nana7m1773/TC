@@ -133,7 +133,7 @@ jstring generateResult(JNIEnv * env, size_t inputTokens, int maxTokens, float te
 
 }
 
-extern "C" JNIEXPORT void JNICALL Java_cn_muyu_assistant_NativeInference_load(JNIEnv * env, jclass, jstring path, jint size, jint threads) {
+extern "C" JNIEXPORT void JNICALL Java_cn_muyu_assistant_NativeInference_load(JNIEnv * env, jclass, jstring path, jint size, jint threads, jboolean allowContextClamp) {
     try {
         cancelled = false;
         release();
@@ -150,7 +150,12 @@ extern "C" JNIEXPORT void JNICALL Java_cn_muyu_assistant_NativeInference_load(JN
         if (!model) throw std::runtime_error("GGUF loading failed: unsupported architecture, damaged file or insufficient memory");
         if (!llama_model_chat_template(model, nullptr)) throw std::runtime_error("Model has no chat template; use a chat/instruct GGUF");
         templates = common_chat_templates_init(model, "");
-        if (llama_model_n_ctx_train(model) < size) throw std::runtime_error("Requested context exceeds native model context; model cannot meet 12800-token requirement");
+        const auto nativeContext = llama_model_n_ctx_train(model);
+        if (size < 512 || size > 32768 || nativeContext < 512) throw std::runtime_error("Invalid requested or native model context size");
+        if (nativeContext < static_cast<uint32_t>(size)) {
+            if (!allowContextClamp) throw std::runtime_error("Requested context exceeds native model context; choose a supported context size");
+            size = static_cast<jint>(nativeContext);
+        }
         auto cp = llama_context_default_params();
         cp.n_ctx = size;
         cp.n_batch = 256;
@@ -166,6 +171,10 @@ extern "C" JNIEXPORT void JNICALL Java_cn_muyu_assistant_NativeInference_load(JN
         if (!context) throw std::runtime_error("Context allocation failed: insufficient memory or unsupported model");
         if (llama_n_ctx(context) < static_cast<uint32_t>(size)) throw std::runtime_error("Engine effective context is lower than requested");
     } catch (const std::exception & error) { release(); fail(env, error); }
+}
+
+extern "C" JNIEXPORT jint JNICALL Java_cn_muyu_assistant_NativeInference_contextSize(JNIEnv *, jclass) {
+    return context ? static_cast<jint>(llama_n_ctx(context)) : 0;
 }
 
 extern "C" JNIEXPORT jint JNICALL Java_cn_muyu_assistant_NativeInference_tokenize(JNIEnv * env, jclass, jstring text) {
@@ -236,7 +245,7 @@ extern "C" JNIEXPORT jstring JNICALL Java_cn_muyu_assistant_NativeInference_anal
             if (mtmd_input_chunk_get_type(chunk) == MTMD_INPUT_CHUNK_TYPE_IMAGE) visionTokens += mtmd_input_chunk_get_n_tokens(chunk);
         }
         if (visionTokens > 1024 || maxTokens < 1 || tokenCount + maxTokens > llama_n_ctx(context))
-            throw std::runtime_error("Image/text plus output exceeds 12800-token context or 1024 visual-token limit");
+            throw std::runtime_error("Image/text plus output exceeds the effective model context or 1024 visual-token limit");
         llama_memory_clear(llama_get_memory(context), true);
         llama_pos past = 0;
         if (mtmd_helper_eval_chunks(vision.get(), context, chunks.get(), 0, 0, 256, true, &past) != 0 || cancelled)

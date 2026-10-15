@@ -2,14 +2,14 @@ name: Publish checked L-BOT installers
 
 on:
   push:
-    branches: [lbot-release-0.2.0]
+    branches: [lbot-release-0.3.0]
   workflow_dispatch:
 
 permissions:
   contents: write
 
 concurrency:
-  group: lbot-release-0.2.0
+  group: lbot-release-0.3.0
   cancel-in-progress: false
 
 jobs:
@@ -29,7 +29,7 @@ jobs:
           manifest=json.loads((folder/'manifest.json').read_text())
           target=manifest['target']
           assert re.fullmatch('[0-9a-f]{40}',target)
-          expected={'L-BOT-Setup-0.2.0-x64.exe','L-BOT-Android-0.2.0-arm64-debug.apk','L-BOT-source-0.2.0.zip','L-BOT-validation-0.2.0.zip','SHA256SUMS.txt'}
+          expected={'L-BOT-Setup-0.3.0-x64.exe','L-BOT-Android-0.3.0-arm64-debug.apk','L-BOT-source-0.3.0.zip','L-BOT-validation-0.3.0.zip','SHA256SUMS.txt'}
           assert {item['name'] for item in manifest['files']}==expected
           out=Path('release-files');out.mkdir()
           for item in manifest['files']:
@@ -48,6 +48,6 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
-          gh release view v0.2.0 --repo "$GITHUB_REPOSITORY" --json isDraft --jq .isDraft | grep -qx true
-          gh release upload v0.2.0 --repo "$GITHUB_REPOSITORY" --clobber release-files/*
-          gh release edit v0.2.0 --repo "$GITHUB_REPOSITORY" --target "$(cat release-target.txt)" --draft=false --prerelease
+          gh release view v0.3.0 --repo "$GITHUB_REPOSITORY" --json isDraft --jq .isDraft | grep -qx true
+          gh release upload v0.3.0 --repo "$GITHUB_REPOSITORY" --clobber release-files/*
+          gh release edit v0.3.0 --repo "$GITHUB_REPOSITORY" --target "$(cat release-target.txt)" --draft=false --prerelease

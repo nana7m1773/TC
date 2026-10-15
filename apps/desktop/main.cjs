@@ -1,4 +1,4 @@
-const {app,BrowserWindow,ipcMain,safeStorage,dialog,Tray,Menu,nativeImage}=require('electron');
+const {app,BrowserWindow,ipcMain,safeStorage,dialog,Tray,Menu,nativeImage,session}=require('electron');
 const fs=require('node:fs/promises');
 const path=require('node:path');
 const os=require('node:os');
@@ -6,7 +6,7 @@ const {pathToFileURL}=require('node:url');
 const {scryptSync,randomBytes,createCipheriv,createDecipheriv}=require('node:crypto');
 const {existsSync}=require('node:fs');
 
-let window,tray,manager,speech,requestOpenAI,windowsUi,quitting=false,trayTimer;
+let window,tray,manager,speech,requestOpenAI,windowsUi,socialSessions,quitting=false,trayTimer;
 const root=path.resolve(__dirname,'../..');
 app.setName('L-BOT');
 // Preserve the former app's encrypted data location when upgrading; no files are moved or decrypted.
@@ -82,6 +82,10 @@ function setupHandlers() {
       !(process.platform==='linux'&&safeStorage.getSelectedStorageBackend?.()==='basic_text'),
     appVersion:app.getVersion(),physicalDeviceValidation:'待实机验证',dataDirectory:dataDir()}));
   register('listSocialWindows',()=>windowsUi.listSocialWindows());
+  register('activateSocialWindow',input=>windowsUi.activateSocialWindow(input));
+  register('getSocialStatus',()=>socialSessions.getSocialStatus());
+  register('openSocialApp',input=>socialSessions.openSocialApp(input));
+  register('requestSocialAccess',()=>socialSessions.requestSocialAccess());
   register('readSocialWindow',input=>windowsUi.readSocialWindow(input));
   register('captureSocialWindow',input=>windowsUi.captureSocialWindow(input));
   register('prepareSocialReply',input=>windowsUi.prepareSocialReply(input));
@@ -181,6 +185,8 @@ else {
     const speechManifest=JSON.parse(await fs.readFile(path.join(root,'resources/local-speech.json'),'utf8'));
     ({requestOpenAI}=await import(pathToFileURL(path.join(root,'packages/runtime/openai.mjs')).href));
     windowsUi=await import(pathToFileURL(path.join(root,'packages/runtime/windows-ui.mjs')).href);
+    const {createSocialSessions}=await import(pathToFileURL(path.join(root,'packages/runtime/social-sessions.mjs')).href);
+    socialSessions=createSocialSessions({BrowserWindow,session,windowsUi});
     const desktopManifest=await tools.readDesktopManifest();
     manager=new runtime.DesktopModelManager({directory:path.join(dataDir(),'models'),enginePath:await findEngine(),tools,manifest:desktopManifest});await manager.initialize();
     speech=new voiceRuntime.DesktopSpeechManager({directory:path.join(dataDir(),'speech'),enginePath:await findEngine('whisper'),manifest:speechManifest,tools});await speech.initialize();

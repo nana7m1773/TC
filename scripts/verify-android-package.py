@@ -39,7 +39,11 @@ signature = subprocess.run([str(tooling / 'apksigner'), 'verify', '--verbose', '
 subprocess.run([str(tooling / 'zipalign'), '-c', '-P', '16', '-v', '4', str(apk)], check=True, capture_output=True)
 metadata = subprocess.run([str(tooling / 'aapt'), 'dump', 'badging', str(apk)], check=True, capture_output=True, text=True).stdout
 assert "application-label:'L-BOT'" in metadata and f"versionName='{version}'" in metadata
-report = {'verifiedAt': __import__('datetime').datetime.now(__import__('datetime').timezone.utc).isoformat(), 'apk': str(apk), 'apkBytes': apk.stat().st_size, 'sha256': hashlib.sha256(apk.read_bytes()).hexdigest(), 'assetFiles': len(expected), 'manifestsMatch': True, 'androidOriginal2BManifestUnchanged': True, 'appName': 'L-BOT', 'version': version, 'signatureVerified': True, 'signingType': 'debug', 'alignment16KiBPassed': True, 'elfLoadAlignment':elf_alignment, 'androidDeviceAcceptance': 'pending', 'assets': {name: hashlib.sha256(data).hexdigest() for name, data in expected.items()}}
+manifest_dump = subprocess.run([str(tooling / 'aapt'), 'dump', 'xmltree', str(apk), 'AndroidManifest.xml'], check=True, capture_output=True, text=True).stdout
+assert 'cn.muyu.assistant.SocialNotificationService' in manifest_dump and 'android.permission.BIND_NOTIFICATION_LISTENER_SERVICE' in manifest_dump
+for package_name in ['com.tencent.mobileqq', 'com.tencent.mm', 'tv.danmaku.bili', 'com.sina.weibo', 'com.whatsapp', 'com.whatsapp.w4b']:
+    assert package_name in manifest_dump, f'Missing package visibility: {package_name}'
+report = {'verifiedAt': __import__('datetime').datetime.now(__import__('datetime').timezone.utc).isoformat(), 'apk': str(apk), 'apkBytes': apk.stat().st_size, 'sha256': hashlib.sha256(apk.read_bytes()).hexdigest(), 'assetFiles': len(expected), 'manifestsMatch': True, 'notificationServiceAndPackageQueriesPresent': True, 'androidOriginal2BManifestUnchanged': True, 'appName': 'L-BOT', 'version': version, 'signatureVerified': True, 'signingType': 'debug', 'alignment16KiBPassed': True, 'elfLoadAlignment':elf_alignment, 'androidDeviceAcceptance': 'pending', 'assets': {name: hashlib.sha256(data).hexdigest() for name, data in expected.items()}}
 (root / 'artifacts/android/package-verification.json').write_text(json.dumps(report, ensure_ascii=False, indent=2) + '\n')
 (root / 'artifacts/android/signature-verification.txt').write_text(signature)
 print(json.dumps(report, ensure_ascii=False))

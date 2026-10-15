@@ -1,0 +1,37 @@
+.social-connections {display:grid;gap:18px;margin:0 34px 28px;min-width:0}
+.social-connections > .panel {padding:22px}
+.social-connections h2,.social-connections h3,.social-connections h4 {margin:0;color:#526b47}
+.social-connections h2 {display:flex;align-items:center;gap:9px;font-size:19px}
+.social-connections h3 {display:flex;align-items:center;gap:7px;font-size:15px}
+.social-connections h4 {font-size:14px;overflow-wrap:anywhere;min-width:0}
+.social-connections p {color:#6d7f65;font-size:12px;line-height:1.8;margin:12px 0;overflow-wrap:anywhere}
+.social-connections .hint,.social-connections small {color:#8a967f;font-size:11px;line-height:1.7;overflow-wrap:anywhere}
+.social-connections .row {gap:10px}
+.social-intro > .row:first-child {justify-content:space-between}
+.social-steps {list-style:none;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));padding:0;margin:22px 0;gap:12px}
+.social-steps li {display:flex;align-items:center;gap:10px;padding:13px 10px;background:#f3f5ed;border-radius:7px;color:#667a58;font-size:12px}
+.social-steps b {display:grid;place-items:center;width:25px;height:25px;border-radius:50%;background:#e2e9d7;flex:none}
+.social-model {padding-top:14px;border-top:1px solid var(--line);font-size:12px;color:#78896d}
+.social-pause {margin-top:16px;padding:14px;background:#fbf1df;border:1px solid #ead7ad;border-radius:7px}
+.social-pause p {margin-top:0;color:#94733b}
+.social-access .note-block {white-space:pre-line}
+.social-apps {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.social-app {padding:22px;min-width:0}
+.social-app h3 {margin-bottom:7px}
+.social-app .button {font-size:11px}
+.social-connections .social-error {color:#92564c;background:#fbefeb;padding:12px;border-radius:7px}
+.social-auto {font-size:12px;line-height:1.7;margin-bottom:0;align-items:flex-start}
+.social-auto input {margin-top:3px;flex:none}
+.social-notification {margin-top:18px;padding-top:18px;border-top:1px solid var(--line);min-width:0}
+.social-notification summary {cursor:pointer;color:#7d8d71;font-size:11px;margin:12px 0}
+.social-original {white-space:pre-wrap;overflow-wrap:anywhere;background:#f4f5ef;padding:12px;border-radius:7px}
+.social-reply {margin-top:15px;background:#f8f8f2;border:1px solid var(--line);padding:16px;border-radius:8px}
+.social-reply textarea {min-height:85px}
+.social-connections .social-review {display:flex;align-items:flex-start;gap:7px;color:#94733b;overflow-wrap:anywhere}
+.social-review svg {flex:none;margin-top:4px}
+.social-receipt {display:grid;gap:12px;margin-top:16px}
+.social-import {display:grid;gap:12px}
+.social-import p {margin:0}
+.social-import textarea {min-height:95px}
+.social-import > .button {justify-self:start}
+@media(max-width:760px) {.social-connections {margin:0 14px 22px;gap:14px}.social-connections > .panel,.social-app {padding:17px}.social-apps {grid-template-columns:1fr}.social-steps {grid-template-columns:1fr;gap:7px}.social-steps li {padding:9px}.social-connections h2 {font-size:17px}.social-reply {padding:12px}.social-connections .button {white-space:normal}}

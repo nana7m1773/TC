@@ -2,9 +2,10 @@ import {QueueEngine,createDefaultRule,evaluateSafety,selectMemories,trimContext,
 import {compactConversation,defaultCompression,type CompressionSettings} from './CompactionSettings';
 import type {NativeBridge} from './runtime';
 import type {ComputerReplyRequest} from './ComputerUseView';
+import {prepareLocalInference} from './local-inference';
 
 interface State {queue:QueueState;profile:StyleProfile;memories:Memory[];compression?:CompressionSettings}
-interface Job {id:string;scope:Scope;profile:StyleProfile;memories:Memory[];rules:string;reserved:boolean}
+interface Job {id:string;scope:Scope;profile:StyleProfile;memories:Memory[];rules:string;reserved:boolean;attempted?:boolean}
 /** The model writes text only. Native window operations remain a separate, explicitly authorized transport. */
 export class ComputerReplyService {
   private jobs=new Map<string,Job>();
@@ -30,20 +31,26 @@ export class ComputerReplyService {
   async request(r:ComputerReplyRequest){
     this.checkInput(r);if(this.generating)throw new Error('另一个回复正在生成。');
     const key=this.key(r),scope=this.scope(r),s=this.options.getState();
-    if(this.jobs.has(key)||s.queue.drafts.some(d=>scopeKey(d.scope)===scopeKey(scope)&&['unknown','queued'].includes(d.status)))throw new Error('本次消息已有任务，或此会话发送结果待核实，不能重复发送。');
+    const prior=this.jobs.get(key);
+    if(prior?.reserved||prior?.attempted||s.queue.drafts.some(d=>scopeKey(d.scope)===scopeKey(scope)&&d.status==='unknown'))throw new Error('此会话发送结果待核实，不能重复发送。');
     this.generating=true;
     try {
       const digest=Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(key))),b=>b.toString(16).padStart(2,'0')).join('');
       const q=new QueueEngine(s.queue);
-      if(!q.ingest({id:`computer:${digest}`,scope,role:'peer',text:r.text,kind:'text',createdAt:this.now()}).accepted)throw new Error('这条已确认消息已导入，不能作为新消息重发。');
+      const incomingId=`computer:${digest}`;
+      const existing=q.snapshot().messages.find(m=>m.id===incomingId&&scopeKey(m.scope)===scopeKey(scope));
+      if(existing&&q.snapshot().answered.includes(JSON.stringify([scopeKey(scope),incomingId])))throw new Error('这条消息已有本人核实的回复。');
+      if(prior){const old=q.getDraft(prior.id);if(old&&['generated','review','queued'].includes(old.status))q.cancel(old.id);this.jobs.delete(key);}
+      if(!existing)q.ingest({id:incomingId,scope,role:'peer',text:r.text,kind:'text',createdAt:this.now()});
       this.options.setQueue(q.snapshot());
       const composition=q.compose(scope,this.now(),Infinity),native=this.options.native();
-      const status=await native.modelStatus();if(status.loaded!==true&&status.state!=='ready')await native.loadModel({contextSize:12800});
+      const local=await prepareLocalInference(native);
       const profile={...s.profile,replyLanguage:r.rules.replyLanguage||s.profile.replyLanguage};
       const memories=selectMemories(s.memories,scope,this.now()),settings=s.compression??defaultCompression;
       const compaction=settings.enabled?compactConversation(q.snapshot(),composition.messages,scope,memories,settings,composition.messageIds,this.now()):undefined;
-      const budget=await trimContext({profile,memories,messages:composition.messages,compaction,currentMessageIds:composition.messageIds,now:this.now(),maxContextTokens:12800,outputReserve:384,countTokens:async prompt=>(await native.tokenize({text:prompt})).count});
-      const result=await native.infer({prompt:budget.prompt,contextSize:12800,maxTokens:384,temperature:.3});
+      const reserve=Math.min(384,Math.floor(local.contextSize/4));
+      const budget=await trimContext({profile,memories,messages:composition.messages,compaction,currentMessageIds:composition.messageIds,now:this.now(),maxContextTokens:local.contextSize,outputReserve:reserve,countTokens:async prompt=>(await native.tokenize({text:prompt,modelPath:local.modelPath})).count});
+      const result=await native.infer({prompt:budget.prompt,contextSize:local.contextSize,modelPath:local.modelPath,maxTokens:reserve,temperature:.3});
       if(!result.text.trim())throw new Error('本地模型未返回回复。');
       const latest=this.options.getState(),live=new QueueEngine(latest.queue);
       if(latest.profile!==s.profile||latest.memories!==s.memories||live.contextVersion(scope)!==composition.contextVersion||latest.queue.paused)throw new Error('生成期间偏好、记忆或会话已变化，结果已丢弃。');
@@ -54,13 +61,14 @@ export class ComputerReplyService {
       this.options.setQueue(live.snapshot());
       this.jobs.set(key,{id:draft.id,scope,profile:s.profile,memories:s.memories,rules:JSON.stringify(r.rules),reserved:false});
       const reasons=decision.reasons.filter(x=>x!=='reply_delay');
-      return {text:result.text,allowed:reasons.length===0,reason:this.reason(reasons),notBefore:scheduled.notBefore};
+      return {text:result.text,allowed:reasons.length===0,requiresReview:decision.requiresReview,reason:this.reason(reasons),notBefore:scheduled.notBefore};
     } finally {this.generating=false;}
   }
-  async check(r:ComputerReplyRequest&{draft:string;priorNotBefore?:number}){
+  async check(r:ComputerReplyRequest&{draft:string;priorNotBefore?:number;approved?:boolean}){
     this.checkInput(r);const job=this.jobs.get(this.key(r));if(!job)throw new Error('本次回复任务不存在，请重新确认收到的消息。');
     const s=this.options.getState(),q=new QueueEngine(s.queue),draft=q.getDraft(job.id);
-    if(job.reserved||!draft||draft.text!==r.draft||s.profile!==job.profile||s.memories!==job.memories||JSON.stringify(r.rules)!==job.rules)throw new Error('草稿、偏好或本次授权已改变，禁止发送。');
+    if(job.reserved||job.attempted||!draft||(draft.text!==r.draft&&!r.approved)||s.profile!==job.profile||s.memories!==job.memories||JSON.stringify(r.rules)!==job.rules)throw new Error('草稿、偏好或本次授权已改变，禁止发送。');
+    if(r.approved===true)q.approve(job.id,r.draft);
     const decision=q.permitSend(job.id,this.rule(r),{now:this.now(),canSend:true,currentDeviceId:'windows-computer',responsibleDeviceId:'windows-computer',profile:s.profile});
     this.options.setQueue(q.snapshot());
     if(decision.allowed){job.reserved=true;try{await this.options.persist(q.snapshot());}catch(error){
@@ -85,8 +93,17 @@ export class ComputerReplyService {
       if(r.outcome==='not-attempted')q.markFailed(job.id,r.reason??'尚未调用原生发送',true);
       else q.markUnknown(job.id,r.reason??'界面已尝试发送，需在官方客户端核实');
     }
-    q.pause(true);job.reserved=false;
+    if(r.outcome==='unknown')q.takeover(job.scope);else q.resumeConversation(job.scope);
+    job.reserved=false;job.attempted=r.outcome==='unknown';
     const snapshot=q.snapshot();if(r.outcome==='unknown'){const record=snapshot.drafts.find(d=>d.id===job.id);if(record?.status==='unknown')record.failureReason=r.reason??'界面已尝试发送，需在官方客户端核实';}
     this.options.setQueue(snapshot);await this.options.persist(snapshot);
+  }
+  async resolve(r:ComputerReplyRequest&{draft:string;outcome:'accepted'|'not-sent';evidence:string}){
+    const job=this.jobs.get(this.key(r));if(!job||!r.evidence.trim())throw new Error('请填写在原客户端核实的结果与依据。');
+    const q=new QueueEngine(this.options.getState().queue),draft=q.getDraft(job.id);
+    if(!draft||draft.status!=='unknown'||draft.text!==r.draft)throw new Error('没有与当前草稿匹配的待核实发送。');
+    q.reconcileUnknown(job.id,r.outcome,r.evidence,this.now());
+    if(r.outcome==='not-sent')q.cancel(job.id);
+    q.resumeConversation(job.scope);this.options.setQueue(q.snapshot());await this.options.persist(q.snapshot());
   }
 }

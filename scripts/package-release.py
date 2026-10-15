@@ -24,7 +24,7 @@ report_files += [root/'artifacts/android'/name for name in ['package-verificatio
 with ZipFile(evidence,'w',ZIP_DEFLATED) as archive:
     for file in sorted(set(report_files)):
         if file.exists():archive.write(file,f'L-BOT-validation-{version}/'+file.relative_to(root).as_posix())
-    for name,source_log in [('module-tests.log','release-verify.log'),('ui-tests.log','ui-release-passed.log'),('environment-install.log','install-release-validation.log')]:
+    for name,source_log in [('module-tests.log','release-verify.log'),('ui-tests.log','ui-release-passed.log'),('environment-install.log','install-release-validation.log'),('notification-targeted-ui.log','notification-targeted-ui.log')]:
         file=Path(os.environ.get('TC_RELEASE_LOG_DIR','/workspace/.setup'))/source_log
         if file.exists():archive.write(file,f'L-BOT-validation-{version}/logs/{name}')
 with ZipFile(evidence) as archive:assert archive.testzip() is None

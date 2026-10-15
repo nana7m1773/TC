@@ -1,0 +1,42 @@
+{
+  "verifiedAt": "2026-10-15T17:35:26.221105+00:00",
+  "version": "0.3.0",
+  "host": "Linux-6.18.44-x86_64-with-glibc2.41",
+  "moduleTests": {
+    "passed": 214,
+    "skipped": 1,
+    "skipReason": "opt-in interactive Windows UI Automation fixture on Linux",
+    "realQueueNotificationTests": 10,
+    "nativeBoundary": "explicit test doubles"
+  },
+  "browserTests": {
+    "fullSuitePassed": 64,
+    "additionalTargetedPassed": 1,
+    "additionalTargeted": "regenerate only an unattempted review draft; unknown never regenerated",
+    "scope": "Chromium UI, explicit native/model doubles"
+  },
+  "nativeElectron": "native-practical-electron-linux.json",
+  "windowsScript": "windows-uia-compile-linux.json",
+  "androidLint": {
+    "errors": 0,
+    "warnings": 6,
+    "scope": "Java / ARM64 JNI and static analysis, no real Android device"
+  },
+  "acceptancePending": [
+    "Actual Windows UIA/IME/client login and send",
+    "Actual Android notifications/RemoteInput on device",
+    "Five platforms actual account delivery and background behavior"
+  ],
+  "authors": {
+    "main": "Hebe",
+    "sponsor": "Zijie"
+  },
+  "nativeInstallers": {
+    "android": "../android/package-verification.json",
+    "windows": "windows-package.json"
+  },
+  "repositoryAboutUpdate": {
+    "status": "blocked",
+    "reason": "GitHub installation token returns HTTP 403 Resource not accessible by integration for PATCH repository metadata; description provided in README"
+  }
+}

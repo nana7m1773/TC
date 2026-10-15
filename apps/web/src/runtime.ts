@@ -73,10 +73,16 @@ export interface NativeBridge {
   }): Promise<NativeResult>;
   setAutostart?(args: { enabled: boolean }): Promise<{ enabled: boolean }>;
   getAutostart?(): Promise<{ enabled: boolean }>;
+  getSocialStatus?(): Promise<NativeResult>;
+  requestSocialAccess?(): Promise<NativeResult>;
+  openSocialApp?(args:{platform:string;mode?:'native'|'web'}): Promise<NativeResult>;
+  getSocialNotifications?(args:{limit?:number}): Promise<NativeResult>;
+  replySocialNotification?(args:{eventId:string;text:string;consent:boolean}): Promise<NativeResult>;
   listSocialWindows?(): Promise<NativeResult>;
-  readSocialWindow?(args: {selection:string;consent:boolean;expectedTitle:string}): Promise<NativeResult>;
+  activateSocialWindow?(args:{selection:string;consent:boolean;expectedTitle:string}): Promise<NativeResult>;
+  readSocialWindow?(args: {selection:string;consent:boolean;expectedTitle:string;inputTarget?:string}): Promise<NativeResult>;
   captureSocialWindow?(args: {selection:string;consent:boolean;expectedTitle:string}): Promise<NativeResult>;
-  prepareSocialReply?(args: {selection:string;consent:boolean;expectedTitle:string;text:string;expectedSnapshot:string}): Promise<NativeResult>;
+  prepareSocialReply?(args: {selection:string;consent:boolean;expectedTitle:string;text:string;expectedSnapshot:string;inputTarget?:string}): Promise<NativeResult>;
   commitSocialReply?(args: {ticket:string;consent:boolean}): Promise<NativeResult>;
   clearCache?(): Promise<NativeResult>;
   exportFile?(args: {

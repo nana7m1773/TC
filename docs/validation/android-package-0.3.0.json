@@ -1,0 +1,39 @@
+{
+  "verifiedAt": "2026-10-15T17:35:31.424079+00:00",
+  "apk": "/workspace/TC/artifacts/android/L-BOT-Android-0.3.0-arm64-debug.apk",
+  "apkBytes": 14499010,
+  "sha256": "7d35a0b7b5d8cd66ed440a222f584bfa6bfe7db6e945825b2db50fa5320ea497",
+  "assetFiles": 3,
+  "manifestsMatch": true,
+  "notificationServiceAndPackageQueriesPresent": true,
+  "androidOriginal2BManifestUnchanged": true,
+  "appName": "L-BOT",
+  "version": "0.3.0",
+  "signatureVerified": true,
+  "signingType": "debug",
+  "alignment16KiBPassed": true,
+  "elfLoadAlignment": {
+    "lib/arm64-v8a/libc++_shared.so": [
+      16384,
+      16384,
+      16384,
+      16384
+    ],
+    "lib/arm64-v8a/libmuyu-inference.so": [
+      16384,
+      16384,
+      16384
+    ],
+    "lib/arm64-v8a/libmuyu-speech.so": [
+      16384,
+      16384,
+      16384
+    ]
+  },
+  "androidDeviceAcceptance": "pending",
+  "assets": {
+    "index.html": "75507320b607932bfe34f4f7f8c9dab362873250b14fcf4fe00b3c1c3763b3d1",
+    "assets/index-CmTgIgXb.css": "1cb7e931e7d849ea20f1526a6a7067c0c97ecb7b094bd780acb29ec56c965e70",
+    "assets/index-BfbVA4pN.js": "7c23669f27dfe2f4b3019fdbc19ca7bdff0b0082257a2eed54c9fd15c3fd5a4e"
+  }
+}

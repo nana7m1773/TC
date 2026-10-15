@@ -17,8 +17,8 @@ test('computer reply uses local generation, enforces delay and saves reservation
   const early=await f.service.check({...request,draft:d.text});assert.equal(early.allowed,false);assert.equal(f.persisted,false);
   f.advance();const check=await f.service.check({...request,draft:d.text});assert.equal(check.allowed,true);assert.equal(f.persisted,true);assert.equal(f.state.queue.inFlight.length,1);
   await f.service.finish({...request,draft:d.text,outcome:'unknown'});
-  assert.equal(f.state.queue.paused,true);assert.equal(f.state.queue.drafts[0].status,'unknown');assert.equal(f.state.queue.answered.length,0);
-  await assert.rejects(f.service.request({...request,snapshot:'another'}),/暂停/);
+  assert.equal(f.state.queue.paused,false);assert.equal(f.state.queue.takenOver.length,1);assert.equal(f.state.queue.drafts[0].status,'unknown');assert.equal(f.state.queue.answered.length,0);
+  await assert.rejects(f.service.request({...request,snapshot:'another'}),/待核实/);
 });
 test('unapproved conversation, global pause, sensitive data or invented self-state never auto-send',async()=>{
   await assert.rejects(fixture().service.request({...request,rules:{...request.rules,whitelist:['other']}}),/未获/);
@@ -30,12 +30,12 @@ test('unapproved conversation, global pause, sensitive data or invented self-sta
 test('draft edits, profile changes and replay refuse the native send reservation',async()=>{
   const f=fixture(),d=await f.service.request(request);f.advance();
   await assert.rejects(f.service.check({...request,draft:'edited'}),/改变/);
-  await assert.rejects(f.service.request(request),/已有任务/);
+  const regenerated=await f.service.request(request);assert.equal(regenerated.text,d.text);assert.equal(f.calls,2);assert.equal(f.state.queue.messages.length,1);
   f.editProfile();await assert.rejects(f.service.check({...request,draft:d.text}),/改变/);
   assert.equal(f.persisted,false);
 });
 test('a reserved task canceled before calling native commit preserves no-send evidence',async()=>{
   const f=fixture(),d=await f.service.request(request);f.advance();await f.service.check({...request,draft:d.text});
   await f.service.finish({...request,draft:d.text,outcome:'not-attempted',reason:'owner canceled before commit'});
-  assert.equal(f.state.queue.drafts[0].status,'cancelled');assert.equal(f.state.queue.inFlight.length,0);assert.equal(f.state.queue.answered.length,0);assert.equal(f.state.queue.paused,true);
+  assert.equal(f.state.queue.drafts[0].status,'cancelled');assert.equal(f.state.queue.inFlight.length,0);assert.equal(f.state.queue.answered.length,0);assert.equal(f.state.queue.paused,false);assert.equal(f.state.queue.takenOver.length,0);
 });

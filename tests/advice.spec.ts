@@ -8,23 +8,29 @@ const humanLabel = "我确认这些记录来自人类真实表达且有权使用
 const privateLabel = "仅保存到当前账号、会话和联系人，不跨会话共享";
 
 // Native bridge and model doubles exercise UI contracts only. No real model, API or social send runs here.
-async function installDouble(page: Page, cloud = false) {
+async function installDouble(page: Page, cloud = false, activeModel?: { modelPath: string; contextSize: number }) {
   const api = { id: "advice-test-api", name: "测试 API 替身", protocol: "openai", baseUrl: "https://example.test/v1", modelId: "test-double", contextSize: 12800,
     maxTokens: 768, temperature: 0.6, timeoutMs: 60000, stream: false, headers: {}, extra: {}, capabilities: { text: true, image: false, audio: false } };
   const seed = cloud ? JSON.stringify({ version: 1, queue: new QueueEngine().snapshot(), profile: createDefaultProfile(), memories: [], rules: [], apis: [api], activeApiId: api.id,
     mode: "local", locations: { text: "local", image: "local", audio: "local" }, logs: [] }) : null;
-  await page.addInitScript(seed => {
+  await page.addInitScript(({ seed, activeModel }) => {
     const target = window as unknown as { assistant: Record<string, unknown>; __advice: { saved: string[]; tokenized: string[]; inferred: Record<string, unknown>[]; requests: Record<string, unknown>[] } };
     const calls = target.__advice = { saved: [], tokenized: [], inferred: [], requests: [] };
     target.assistant = {
       loadState: async () => ({ state: seed }), saveState: async ({ state }: { state: string }) => { calls.saved.push(state); return { saved: true }; },
-      modelStatus: async () => ({ loaded: true, contextSize: 12800 }), loadModel: async () => ({ loaded: true }),
-      tokenize: async ({ text }: { text: string }) => { calls.tokenized.push(text); return { count: 600 }; },
-      infer: async (args: Record<string, unknown>) => { calls.inferred.push(args); return { text: String(args.prompt).includes("本次仅扮演") ? "AI 推测 · 对方：好的，可以再确认一下。" : String(args.prompt).includes("本次请给出") ? "AI 推测 · 演练反馈：可以先明确你的边界。" : "建议先确认期限，再回答能否协助。", inputTokens: 600, outputTokens: 25, tokensPerSecond: 1, contextSize: 12800 }; },
+      modelStatus: async () => ({ loaded: true, contextSize: 12800, ...activeModel }), loadModel: async () => ({ loaded: true }),
+      tokenize: async ({ text, modelPath }: { text: string; modelPath?: string }) => {
+        if (activeModel && modelPath !== activeModel.modelPath) throw new Error("省略已导入模型路径会错误打开默认模型。");
+        calls.tokenized.push(text); return { count: 600 };
+      },
+      infer: async (args: Record<string, unknown>) => {
+        if (activeModel && (args.modelPath !== activeModel.modelPath || args.contextSize !== activeModel.contextSize)) throw new Error("推理路径或上下文与已加载模型不一致。");
+        calls.inferred.push(args); return { text: String(args.prompt).includes("本次仅扮演") ? "AI 推测 · 对方：好的，可以再确认一下。" : String(args.prompt).includes("本次请给出") ? "AI 推测 · 演练反馈：可以先明确你的边界。" : "建议先确认期限，再回答能否协助。", inputTokens: 600, outputTokens: 25, tokensPerSecond: 1, contextSize: activeModel?.contextSize ?? 12800 };
+      },
       request: async (args: Record<string, unknown>) => { calls.requests.push(args); return { text: "API 测试替身建议正文。" }; },
       stop: async () => ({}), hasApiKey: async () => ({ present: false }),
     };
-  }, seed);
+  }, { seed, activeModel });
 }
 async function openAdvice(page: Page) {
   await page.goto(baseUrl);
@@ -48,6 +54,38 @@ test("browser consultation reports unavailable inference without inventing a mod
   await lab(page).getByRole("button", { name: "生成建议回复", exact: true }).click();
   await expect(lab(page).getByRole("alert")).toContainText("浏览器演示只验证界面与规则");
   await expect(lab(page).getByTestId("advice-result")).toHaveCount(0);
+});
+
+test("consultation keeps the explicitly loaded imported model path and its actual context", async ({ page }) => {
+  const activeModel = { modelPath: "/data/user/0/cn.muyu.assistant/files/models/imported-small.gguf", contextSize: 4096 };
+  await installDouble(page, false, activeModel); await openAdvice(page);
+  await expect(lab(page).getByTestId("advice-model-status")).toContainText("4096 tokens");
+  await lab(page).getByLabel("如果收到这句话，如何回复", { exact: true }).fill("这周能帮忙完成报告吗？");
+  await lab(page).getByRole("button", { name: "生成建议回复", exact: true }).click();
+  await expect(lab(page).getByTestId("advice-result")).toContainText("上下文 4096 tokens");
+  const seen = await calls(page);
+  expect(seen.inferred).toHaveLength(1);
+  expect(seen.inferred[0]).toEqual(expect.objectContaining(activeModel));
+  expect(seen.tokenized).toContain(seen.inferred[0].prompt);
+  expect(seen.requests).toHaveLength(0);
+});
+
+test("a confirmed personal phrase is retrieved into the actual advice model input", async ({ page }) => {
+  await installDouble(page); await openAdvice(page);
+  await lab(page).getByRole("button", { name: "管理本人表达样本", exact: true }).click();
+  const learning = page.getByTestId("learning-settings");
+  await learning.getByLabel("本人原句（每行一句）", { exact: true }).fill("报告收到啦，我确认时间后回你。OWNER_STYLE_MARKER");
+  await learning.getByLabel("我确认这些原句出自本人，且有权使用", { exact: true }).check();
+  await learning.getByRole("button", { name: "确认并保存本人原句", exact: true }).click();
+  await learning.getByRole("button", { name: "试用我的表达生成回复", exact: true }).click();
+  await lab(page).getByLabel("如果收到这句话，如何回复", { exact: true }).fill("这份报告能帮忙确认时间吗？");
+  await lab(page).getByRole("button", { name: "生成建议回复", exact: true }).click();
+  await expect(lab(page).getByTestId("advice-result")).toContainText("本次引用本人原句 1 条");
+  const seen = await calls(page);
+  expect(seen.inferred).toHaveLength(1);
+  expect(seen.inferred[0].prompt).toContain("OWNER_STYLE_MARKER");
+  expect(seen.tokenized).toContain(seen.inferred[0].prompt);
+  expect((await latestState(page)).profile.originalPhrases).toHaveLength(1);
 });
 
 test("local model double supports consultation, multiple fictional turns and labeled feedback without creating drafts or samples", async ({ page }) => {

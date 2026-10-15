@@ -1,0 +1,53 @@
+{
+  "verifiedAt": "2026-10-15T17:36:36.892Z",
+  "installer": {
+    "path": "/workspace/TC/artifacts/windows/L-BOT-Setup-0.3.0-x64.exe",
+    "sizeBytes": 150877264,
+    "sha256": "6809511a152e2d9517e95e9134d583def66a294e3c9b655efe80d536233bcae2"
+  },
+  "dependencies": {
+    "electron": "44.7.0",
+    "electronBuilder": "26.15.3"
+  },
+  "uiAssetCount": 3,
+  "engines": [
+    {
+      "version": "b11429",
+      "executableSha256": "7e236243c9b670c6a49410c03186fd575c57a0efe3fd8a21d8727503d571d5b6",
+      "archiveSha256": "1283323272b04cd07905816a597a0da810918102de958f4ff6f7bbaa70ed2efe"
+    },
+    {
+      "version": "v1.8.7",
+      "executableSha256": "4e33b37de3c62160537b5264cdfb0a35c900ca917dad30747fdf12dcc37c108e",
+      "archiveSha256": "d9627486e1c34a03745880485593473e047294260ce9a3cb0aa8deaf15b99af6"
+    }
+  ],
+  "defaultModels": {
+    "windows": {
+      "id": "qwen35-9b-hauhaucs-q4-k-m",
+      "sizeBytes": 5627044224,
+      "sha256": "2ca636d9e81d3d23ca9b60c234fe185d30ec082eeba69ce770fdb0c76559a4f5",
+      "contextSize": 12800
+    },
+    "android": {
+      "id": "qwen35-2b-hauhaucs-q4-k-m",
+      "sha256": "be3ccca13a9d1bc8b67165ea80bd103cd6151a37ad131183cc7ca388f78d9517"
+    }
+  },
+  "vcRuntime": {
+    "version": "14.51.36247.0",
+    "sha256": "843068991daaa1f73ad9f6239bce4d0f6a07a51f18c37ea2a867e9beca71295c"
+  },
+  "checks": [
+    "完整 NSIS 安装器包含应用归档、Microsoft 前置安装器和卸载器。",
+    "L-BOT 主程序和独立解包的固定 PowerShell 窗口操作脚本存在，脚本 SHA 与最新源码一致。",
+    "嵌入的界面、preload、原生桥接、本地推理/API/图片/语音模块和模型清单与最新源码一致。",
+    "Windows 默认 9B Q4_K_M 与 Android 默认 2B 清单独立；两者有效上下文仍为 12,800 tokens。",
+    "内置 llama.cpp/Whisper 完整 DLL、独立 ABI 目录、许可证、官方版本及归档 SHA 校验一致。"
+  ],
+  "limitations": [
+    "安装器和 Windows 进程未在真实 Windows 设备执行。",
+    "Microsoft Authenticode 与 UAC 检查在实际安装时执行；Linux 不宣称已完成此项。",
+    "8 GB Android 实机及平台真实消息联调仍待验收。"
+  ]
+}

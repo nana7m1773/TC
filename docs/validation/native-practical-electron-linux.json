@@ -1,0 +1,174 @@
+{
+  "startedAt": "2026-10-15T17:28:04.304Z",
+  "host": "Linux Electron 44.7.0 + Xvfb + real IPC and actual llama.cpp, not Windows client validation",
+  "stages": [
+    {
+      "stage": "actual-preload-ipc",
+      "status": {
+        "state": "stopped",
+        "contextSize": 12800,
+        "cacheType": "q8_0",
+        "backend": "CPU",
+        "inferenceTimeoutMs": 1200000,
+        "threads": 4,
+        "engineAvailable": true,
+        "downloading": false,
+        "defaultModel": {
+          "id": "qwen35-9b-hauhaucs-q4-k-m",
+          "name": "Qwen3.5 9B · HauhauCS · Q4_K_M",
+          "filename": "Qwen3.5-9B-Uncensored-HauhauCS-Aggressive-Q4_K_M.gguf",
+          "url": "https://huggingface.co/HauhauCS/Qwen3.5-9B-Uncensored-HauhauCS-Aggressive/resolve/0a41c68809d375475f954be12ba7c40efa56c2a9/Qwen3.5-9B-Uncensored-HauhauCS-Aggressive-Q4_K_M.gguf",
+          "sha256": "2ca636d9e81d3d23ca9b60c234fe185d30ec082eeba69ce770fdb0c76559a4f5",
+          "sizeBytes": 5627044224,
+          "requiredStorageBytes": 8500000000,
+          "maxImportBytes": 16000000000,
+          "recommendedPhysicalMemoryBytes": 17179869184,
+          "resourceRecommendation": "At least 16 GiB physical memory and 8.5 GB free storage are recommended for the model, vision projector and working space. This is a resource recommendation, not a measured performance or Windows device acceptance claim.",
+          "quantization": "Q4_K_M",
+          "architecture": "qwen35",
+          "contextSize": 12800,
+          "nativeContextSize": 262144,
+          "parameterCount": 9000000000,
+          "format": "GGUF",
+          "source": "https://huggingface.co/HauhauCS/Qwen3.5-9B-Uncensored-HauhauCS-Aggressive",
+          "sourceRevision": "0a41c68809d375475f954be12ba7c40efa56c2a9",
+          "sourceVerified": true,
+          "checksumSource": "https://huggingface.co/api/models/HauhauCS/Qwen3.5-9B-Uncensored-HauhauCS-Aggressive/revision/0a41c68809d375475f954be12ba7c40efa56c2a9?blobs=true",
+          "originalModel": "https://huggingface.co/Qwen/Qwen3.5-9B",
+          "originalModelRevision": "c202236235762e1c871ad0ccb60c8ee5ba337b9a",
+          "contextSource": "https://huggingface.co/Qwen/Qwen3.5-9B/blob/c202236235762e1c871ad0ccb60c8ee5ba337b9a/config.json",
+          "contextSourceField": "text_config.max_position_embeddings",
+          "license": "Apache-2.0",
+          "licenseUrl": "https://huggingface.co/Qwen/Qwen3.5-9B/blob/c202236235762e1c871ad0ccb60c8ee5ba337b9a/LICENSE",
+          "publisherLicenseSource": "https://huggingface.co/HauhauCS/Qwen3.5-9B-Uncensored-HauhauCS-Aggressive/blob/0a41c68809d375475f954be12ba7c40efa56c2a9/README.md",
+          "publisherVariant": "Uncensored-HauhauCS-Aggressive",
+          "visionProjector": {
+            "id": "qwen35-9b-hauhaucs-mmproj-bf16",
+            "kind": "vision-projector",
+            "format": "GGUF",
+            "architecture": "clip",
+            "filename": "mmproj-Qwen3.5-9B-Uncensored-HauhauCS-Aggressive-BF16.gguf",
+            "url": "https://huggingface.co/HauhauCS/Qwen3.5-9B-Uncensored-HauhauCS-Aggressive/resolve/0a41c68809d375475f954be12ba7c40efa56c2a9/mmproj-Qwen3.5-9B-Uncensored-HauhauCS-Aggressive-BF16.gguf",
+            "sha256": "05f662501f8bd45607b079723a3e238a4e888fd085a10a53f4057a0e250f6934",
+            "sizeBytes": 921704448,
+            "requiredStorageBytes": 1200000000,
+            "quantization": "BF16",
+            "source": "https://huggingface.co/HauhauCS/Qwen3.5-9B-Uncensored-HauhauCS-Aggressive",
+            "sourceRevision": "0a41c68809d375475f954be12ba7c40efa56c2a9",
+            "checksumSource": "https://huggingface.co/api/models/HauhauCS/Qwen3.5-9B-Uncensored-HauhauCS-Aggressive/revision/0a41c68809d375475f954be12ba7c40efa56c2a9?blobs=true",
+            "sourceVerified": true,
+            "license": "Apache-2.0",
+            "installed": false,
+            "status": "Matching 9B BF16 vision projector metadata verified against the pinned publisher revision; downloaded artifact requires independent size, SHA-256 and GGUF architecture verification. Optional download, not bundled. Windows device acceptance pending."
+          },
+          "verifiedAt": "2026-10-13",
+          "verification": "Layer 1: pinned publisher revision, exact filenames, LFS SHA-256, byte sizes, base source and license verified against Hugging Face metadata; native context read from the pinned official Qwen config. Layer 2: complete downloaded artifacts must independently pass byte-size, SHA-256 and GGUF architecture/context verification before installation. Windows 9B inference and device performance acceptance remain pending."
+        },
+        "maxImportBytes": 16000000000
+      }
+    },
+    {
+      "stage": "actual-local-advice",
+      "text": "AI 建议 · 待本人审核\n\n不客气，如果还有其他需要提醒或协助的地方，随时告诉我。\n\n本地 tokenizer：输入 492 tokens，输出预留 384 tokens，上下文 12800 tokens\n本次引用本人原句 0 条、真实回复示例 0 条；尚无相关样本，仅使用表达偏好。可在「我的表达」补充当前场景的样本。"
+    },
+    {
+      "stage": "actual-account-status",
+      "status": {
+        "platform": "linux",
+        "sessions": [
+          {
+            "platform": "bilibili",
+            "name": "哔哩哔哩",
+            "webAvailable": true,
+            "webWindowOpened": false,
+            "windowOpened": false,
+            "nativeAvailable": false,
+            "nativeWindowOpened": false,
+            "nativeLaunchRequested": false,
+            "loggedIn": "unknown",
+            "messageAccess": "none",
+            "detail": "请在官方窗口自行登录。登录状态未知；需要处理消息时到「电脑操作」选择窗口并确认。"
+          },
+          {
+            "platform": "weibo",
+            "name": "微博",
+            "webAvailable": true,
+            "webWindowOpened": false,
+            "windowOpened": false,
+            "nativeAvailable": false,
+            "nativeWindowOpened": false,
+            "nativeLaunchRequested": false,
+            "loggedIn": "unknown",
+            "messageAccess": "none",
+            "detail": "请在官方窗口自行登录。登录状态未知；需要处理消息时到「电脑操作」选择窗口并确认。"
+          },
+          {
+            "platform": "whatsapp",
+            "name": "WhatsApp",
+            "webAvailable": true,
+            "webWindowOpened": false,
+            "windowOpened": false,
+            "nativeAvailable": false,
+            "nativeWindowOpened": false,
+            "nativeLaunchRequested": false,
+            "loggedIn": "unknown",
+            "messageAccess": "none",
+            "detail": "请在官方窗口自行登录。登录状态未知；需要处理消息时到「电脑操作」选择窗口并确认。"
+          },
+          {
+            "platform": "wechat",
+            "name": "微信",
+            "webAvailable": true,
+            "webWindowOpened": false,
+            "windowOpened": false,
+            "nativeAvailable": false,
+            "nativeWindowOpened": false,
+            "nativeLaunchRequested": false,
+            "loggedIn": "unknown",
+            "messageAccess": "none",
+            "detail": "微信网页版是否允许登录由账号决定；若提示不能使用网页微信，请打开本机微信并到「电脑操作」选择窗口。"
+          },
+          {
+            "platform": "qq",
+            "name": "QQ",
+            "webAvailable": false,
+            "webWindowOpened": false,
+            "windowOpened": false,
+            "nativeAvailable": false,
+            "nativeWindowOpened": false,
+            "nativeLaunchRequested": false,
+            "loggedIn": "unknown",
+            "messageAccess": "none",
+            "detail": "QQ 个人账号没有可用的官方网页私信入口，请使用本机官方 QQ 客户端和「电脑操作」。"
+          }
+        ],
+        "messageAccess": "none"
+      }
+    },
+    {
+      "stage": "actual-official-web-window",
+      "result": {
+        "platform": "bilibili",
+        "name": "哔哩哔哩",
+        "webAvailable": true,
+        "webWindowOpened": true,
+        "windowOpened": true,
+        "nativeAvailable": false,
+        "nativeWindowOpened": false,
+        "nativeLaunchRequested": false,
+        "loggedIn": "unknown",
+        "messageAccess": "none",
+        "detail": "官方窗口已创建，但网页未成功加载。请检查网络后重试，或在本机官方客户端登录并使用「电脑操作」。",
+        "mode": "web",
+        "opened": true,
+        "pageLoaded": false
+      }
+    },
+    {
+      "stage": "remote-isolation",
+      "nativeBridgeExposed": false,
+      "url": "chrome-error://chromewebdata/"
+    }
+  ],
+  "completedAt": "2026-10-15T17:28:23.421Z"
+}

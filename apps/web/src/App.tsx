@@ -74,6 +74,9 @@ import { SimulationLab } from "./SimulationLab";
 import { CompactionSettings, compactConversation, defaultCompression, type CompressionSettings } from "./CompactionSettings";
 import { ComputerUseView } from "./ComputerUseView";
 import { ComputerReplyService } from "./ComputerReplyService";
+import {prepareLocalInference} from './local-inference';
+import {SocialConnections} from './SocialConnections';
+import {NotificationReplyService} from './NotificationReplyService';
 import { AdviceLab,createDefaultAdviceSettings,validateAdviceSettings,type AdviceSettings } from "./AdviceLab";
 const emptyAdviceSettings=createDefaultAdviceSettings();
 
@@ -261,6 +264,7 @@ export default function App() {
     [cloudConsent, setCloudConsent] = useState(false),
     [exportPassword, setExportPassword] = useState(""),
     [recording, setRecording] = useState(false);
+  const [verificationEvidence,setVerificationEvidence]=useState<Record<string,string>>({});
   const media = useRef(
     new Map<string, { kind: "image" | "audio"; data: string; name: string }>(),
   );
@@ -357,6 +361,8 @@ export default function App() {
     getState:()=>stateRef.current,setQueue:queue=>update({queue}),native:requireRuntime,
     persist:async()=>{await saveNow();},
   });
+  const notificationService=useRef<NotificationReplyService|null>(null);
+  if(!notificationService.current)notificationService.current=new NotificationReplyService({getState:()=>stateRef.current,setQueue:queue=>update({queue}),native:requireRuntime,persist:async()=>{await saveNow();}});
   useEffect(() => {
     alive.current = true;
     (async () => {
@@ -553,13 +559,8 @@ export default function App() {
           await processAttachment(mediaMessages[0]!);
           return;
         }
-        const localStatus = await native.modelStatus();
-        if (
-          localStatus.loaded !== true &&
-          localStatus.state !== "ready" &&
-          typeof native.loadModel === "function"
-        )
-          await native.loadModel({ contextSize: 12800 });
+        const local = await prepareLocalInference(native);
+        const reserve=Math.min(768,Math.floor(local.contextSize/4));
         const budget = await trimContext({
           profile: s.profile,
           memories: mem,
@@ -567,15 +568,16 @@ export default function App() {
           compaction: compressed,
           currentMessageIds: composition.messageIds,
           countTokens: async (prompt) =>
-            (await native.tokenize({ text: prompt })).count,
-          maxContextTokens: 12800,
-          outputReserve: 768,
+            (await native.tokenize({ text: prompt,modelPath:local.modelPath })).count,
+          maxContextTokens: local.contextSize,
+          outputReserve: reserve,
         });
         setTokens({ input: budget.inputTokens, output: budget.outputReserve });
         const result = await native.infer({
           prompt: budget.prompt,
-          contextSize: 12800,
-          maxTokens: 768,
+          contextSize: local.contextSize,
+          modelPath:local.modelPath,
+          maxTokens: reserve,
           temperature: 0.6,
         });
         text = result.text;
@@ -896,7 +898,8 @@ export default function App() {
           </button>
         )}
       </div>
-      <small className="hint">手动通道 · 复制、审核均不代表平台已接收</small>
+      {draft.status==='unknown'&&<div className="note-block"><p>请到原应用核实本次回复。此记录在重启或离开页面后仍可在这里处理。</p><input aria-label={`核实依据 ${draft.id}`} placeholder="例如：已在对方会话看到这条回复，或输入框仍有未发出的草稿" value={verificationEvidence[draft.id]??''} onChange={e=>setVerificationEvidence({...verificationEvidence,[draft.id]:e.target.value})}/><div className="row wrap">{(['accepted','not-sent']as const).map(outcome=><Button key={outcome} secondary disabled={!verificationEvidence[draft.id]?.trim()} onClick={()=>{try{mutateQueue(q=>{q.reconcileUnknown(draft.id,outcome,verificationEvidence[draft.id]!,Date.now());if(outcome==='not-sent')q.cancel(draft.id);q.resumeConversation(draft.scope);});setNotice('已记录本人核实结果，解除此会话的待核实状态；不会自动重发。');}catch(e){setNotice(formatError(e));}}}>{outcome==='accepted'?'本人确认已发出':'本人确认未发出，结束本次任务'}</Button>)}</div></div>}
+      <small className="hint">复制、审核及系统提交均不代表平台送达；通知／窗口发送以原应用核实结果为准。</small>
       <DraftFeedback
         draft={draft}
         onConfirm={(text) => learnDraft(draft, text)}
@@ -1411,88 +1414,7 @@ export default function App() {
           </div>
         )}
 
-        {page === "accounts" && (
-          <div className="content-grid">
-            {[
-              {
-                name: "手动消息通道",
-                mark: "M",
-                description:
-                  "粘贴消息、导入文件、生成后复制回复。不会读取其他软件。",
-                status: "可用 · 无自动发送权限",
-              },
-              {
-                name: "QQ",
-                mark: "Q",
-                description:
-                  "官方独立机器人支持被动私聊与群内 @ 回复。本人好友聊天未确认。",
-                status: "机器人适配器 · 未配置凭据",
-              },
-              {
-                name: "微信",
-                mark: "微",
-                description:
-                  "个人账号的日常聊天权限待确认。公众号或企业渠道不等于个人号。",
-                status: "待确认 · 未启用",
-              },
-              {
-                name: "哔哩哔哩",
-                mark: "哔",
-                description: "个人私信读写、历史及媒体授权范围待确认。",
-                status: "待确认 · 未启用",
-              },
-              {
-                name: "微博",
-                mark: "W",
-                description: "第三方登录不等于获得本人私信读写权限。",
-                status: "待确认 · 未启用",
-              },
-              {
-                name: "WhatsApp",
-                mark: "WA",
-                description:
-                  "官方 Business API 与个人账号不同；未完成真实联调。",
-                status: "Business 通道待配置",
-              },
-            ].map((p) => (
-              <article className="panel account-card" key={p.name}>
-                <div className="row">
-                  <span className="avatar sage">{p.mark}</span>
-                  <div>
-                    <h3>{p.name}</h3>
-                    <span className="badge muted">{p.status}</span>
-                  </div>
-                </div>
-                <p>{p.description}</p>
-                <div className="capabilities">
-                  <span>
-                    接收：{p.name === "手动消息通道" ? "手动" : "未启用"}
-                  </span>
-                  <span>
-                    历史：{p.name === "手动消息通道" ? "本机导入" : "未启用"}
-                  </span>
-                  <span>
-                    发送：{p.name === "手动消息通道" ? "本人复制" : "未启用"}
-                  </span>
-                </div>
-                <Button
-                  secondary
-                  onClick={() =>
-                    setNotice(
-                      "未提供个人账号扫码接管能力。请查阅 docs/PLATFORM_CAPABILITIES.md；普通使用者可先使用手动消息通道。",
-                    )
-                  }
-                >
-                  查看授权范围
-                  <ArrowRight size={14} />
-                </Button>
-              </article>
-            ))}
-            <div className="wide note-block">
-              连接器只开放已经确认且实际实现的能力。通知读取、第三方登录和机器人均不代表已接管个人聊天。
-            </div>
-          </div>
-        )}
+        {page === "accounts" && <SocialConnections notify={setNotice} onOpenComputer={()=>setPage('computer')} onOpenModels={()=>setPage('models')} onOpenApis={()=>setPage('api')} globallyPaused={state.queue.paused} onResume={()=>mutateQueue(q=>q.pause(false))} onUseText={text=>{setInput(text);setPage('messages');}} onGenerateNotification={event=>notificationService.current!.generate(event)} onSendNotification={input=>notificationService.current!.send(input)} onResolveNotification={input=>notificationService.current!.resolve(input)}/>}
         {page === "models" && (
           <div className="content-grid">
             <section className="panel wide model-card">
@@ -1751,11 +1673,11 @@ export default function App() {
           <LearningSettings profile={state.profile} scope={scope} setProfile={(profile) => {
             update({ profile });
             log("本人更新确认原句、学习配置与风格建议");
-          }} notify={setNotice} />
+          }} notify={setNotice} onTryStyle={()=>setPage('advice')} />
         </>)}
         {page === "simulation" && <SimulationLab profile={state.profile} memories={state.memories} compression={state.compression ?? defaultCompression} api={activeApi} mode={state.mode} textOnApi={textOnApi} globallyPaused={state.queue.paused} notify={setNotice} />}
-        {page === "advice" && <AdviceLab profile={state.profile} memories={state.memories} scope={scope} onUpdateProfile={profile=>update({profile})} notify={setNotice} settings={state.advice?.[scopeKey(scope)]??emptyAdviceSettings} onSettingsChange={advice=>update({advice:{...stateRef.current.advice,[scopeKey(scope)]:advice}})} apiConfig={activeApi}/>}
-        {page === "computer" && <ComputerUseView notify={setNotice} onRequestReply={request=>computerService.current!.request(request)} onCheckReply={request=>computerService.current!.check(request)} onAttemptResult={request=>computerService.current!.finish(request)} onUseText={(text) => {setInput(text);setPage("messages");setNotice("已复制到手动消息输入，尚未入队、生成或发送。请核对所属会话与内容。");}} />}
+        {page === "advice" && <AdviceLab profile={state.profile} memories={state.memories} scope={scope} onUpdateProfile={profile=>update({profile})} notify={setNotice} settings={state.advice?.[scopeKey(scope)]??emptyAdviceSettings} onSettingsChange={advice=>update({advice:{...stateRef.current.advice,[scopeKey(scope)]:advice}})} apiConfig={activeApi} preferApi={textOnApi} onOpenModels={()=>setPage('models')} onOpenApis={()=>setPage('api')} onOpenLearning={()=>setPage('style')}/>}
+        {page === "computer" && <ComputerUseView notify={setNotice} onOpenAccounts={()=>setPage('accounts')} onOpenModels={()=>setPage('models')} onResolveAttempt={request=>computerService.current!.resolve(request)} onRequestReply={request=>computerService.current!.request(request)} onCheckReply={request=>computerService.current!.check(request)} onAttemptResult={request=>computerService.current!.finish(request)} onUseText={(text) => {setInput(text);setPage("messages");setNotice("已复制到手动消息输入，尚未入队、生成或发送。请核对所属会话与内容。");}} />}
         {page === "rules" && (
           <div className="content-grid">
             <RuleSettings

@@ -55,7 +55,7 @@ public class NativeAssistantPlugin extends Plugin {
     private final ExecutorService network = Executors.newFixedThreadPool(2);
     private final ScheduledExecutorService safetyMonitor = Executors.newSingleThreadScheduledExecutor();
     private final AtomicInteger taskGeneration = new AtomicInteger();
-    private final Set<HttpURLConnection> activeRequests = ConcurrentHashMap.newKeySet();
+    private final Set<HttpURLConnection> activeRequests = Collections.newSetFromMap(new ConcurrentHashMap<HttpURLConnection, Boolean>());
     private volatile boolean cancelled = false;
     private volatile boolean busy = false;
     private volatile String loadedPath = null;
@@ -120,8 +120,13 @@ public class NativeAssistantPlugin extends Plugin {
         return out.toString();
     }
     private String hashId(String id) throws Exception {
-        if (id == null || id.isBlank()) throw new IOException("配置 ID 不能为空");
+        if (blank(id)) throw new IOException("配置 ID 不能为空");
         return hex(MessageDigest.getInstance("SHA-256").digest(id.getBytes(StandardCharsets.UTF_8)));
+    }
+    private static boolean blank(String value) {
+        if (value == null) return true;
+        for (int i = 0; i < value.length(); i++) if (!Character.isWhitespace(value.charAt(i))) return false;
+        return true;
     }
     private SecretKey storageKey() throws Exception {
         KeyStore keys = KeyStore.getInstance("AndroidKeyStore"); keys.load(null);
@@ -162,6 +167,38 @@ public class NativeAssistantPlugin extends Plugin {
             }
             return out.toByteArray();
         }
+    }
+    @PluginMethod public void getSocialStatus(PluginCall call) {
+        run(call, storage, () -> SocialNotificationService.status(getContext()));
+    }
+    @PluginMethod public void requestSocialAccess(PluginCall call) {
+        // Only an explicit UI action invokes this method. Android, rather than this app, grants access.
+        getActivity().runOnUiThread(() -> {
+            try {
+                getActivity().startActivity(SocialNotificationService.accessSettings(getContext()));
+                call.resolve(new JSObject().put("opened", true).put("notificationAccess", SocialNotificationService.hasAccess(getContext())));
+            } catch (Exception e) { call.reject("无法打开系统通知使用权设置，请在系统设置中为 L-BOT 开启通知使用权"); }
+        });
+    }
+    @PluginMethod public void openSocialApp(PluginCall call) {
+        getActivity().runOnUiThread(() -> {
+            try {
+                String platform = call.getString("platform");
+                Intent intent = SocialNotificationService.launchIntent(getContext(), platform);
+                getActivity().startActivity(intent);
+                call.resolve(new JSObject().put("opened", true).put("platform", platform).put("packageName", intent.getComponent() == null ? intent.getPackage() : intent.getComponent().getPackageName()));
+            } catch (Exception e) { call.reject(e.getMessage() == null ? "无法打开官方社交应用" : e.getMessage()); }
+        });
+    }
+    @PluginMethod public void getSocialNotifications(PluginCall call) {
+        int limit = Math.max(1, Math.min(100, call.getInt("limit", 50)));
+        run(call, storage, () -> SocialNotificationService.notifications(getContext(), limit));
+    }
+    @PluginMethod public void replySocialNotification(PluginCall call) {
+        getActivity().runOnUiThread(() -> {
+            try { call.resolve(SocialNotificationService.reply(getContext(), call.getString("eventId"), call.getString("text"), Boolean.TRUE.equals(call.getBoolean("consent")))); }
+            catch (Exception e) { call.reject(e.getMessage() == null ? "系统通知回复失败，请打开官方应用确认" : e.getMessage()); }
+        });
     }
     @PluginMethod public void loadState(PluginCall call) {
         run(call, storage, () -> {
@@ -321,11 +358,7 @@ public class NativeAssistantPlugin extends Plugin {
         }, 2, 2, TimeUnit.SECONDS);
     }
     private File modelFile(String path) throws Exception {
-        String defaultName;
-        try (InputStream in = getContext().getAssets().open("default-model.json")) {
-            defaultName = new JSONObject(new String(readLimited(in, 65536), StandardCharsets.UTF_8)).getString("filename");
-        }
-        File f = path == null || path.isBlank() ? new File(modelsDir(), defaultName) : new File(path);
+        File f = blank(path) ? new File(modelsDir(), defaultManifest().getString("filename")) : new File(path);
         if (!f.getCanonicalPath().startsWith(modelsDir().getCanonicalPath() + File.separator)) throw new IOException("只允许访问应用模型目录中的 GGUF 文件");
         if (!f.isFile() || !f.getName().toLowerCase(Locale.ROOT).endsWith(".gguf")) throw new IOException("请先下载或导入 GGUF 模型");
         try (FileInputStream in = new FileInputStream(f)) {
@@ -362,29 +395,40 @@ public class NativeAssistantPlugin extends Plugin {
         });
     }
     private void ensureLoaded(String path, int contextSize) throws Exception {
-        File model = modelFile(path); thermalCheck();
+        // An omitted path means the owner's currently loaded model, even when the default model is absent.
+        File model = modelFile(blank(path) ? loadedPath : path); thermalCheck();
         if (loadedPath != null && loadedPath.equals(model.getAbsolutePath()) && effectiveContext == contextSize) return;
-        if (contextSize < 1024 || contextSize > 32768) throw new IOException("有效上下文范围为 1024–32768；默认与验收值为 12800");
+        if (contextSize < 512 || contextSize > 32768) throw new IOException("有效上下文范围为 512–32768；默认模型验收值为 12800");
         long required = model.length() + 1400L * 1024 * 1024;
         if (memory().availMem < required) throw new IOException("可用内存不足：模型与上下文建议至少预留 " + (required / 1024 / 1024) + " MiB；当前 " + memory().availMem / 1024 / 1024 + " MiB");
         loadedPath = null; modelStage = "正在加载";
         try {
-            NativeInference.load(model.getAbsolutePath(), contextSize, Math.min(4, Runtime.getRuntime().availableProcessors()));
-            loadedPath = model.getAbsolutePath(); effectiveContext = contextSize; modelStage = "已加载";
+            boolean customModel = true;
+            try { customModel = !model.getCanonicalFile().equals(new File(modelsDir(), defaultManifest().getString("filename")).getCanonicalFile()); }
+            catch (Exception ignored) { /* An explicitly imported GGUF needs no default manifest. */ }
+            NativeInference.load(model.getAbsolutePath(), contextSize, Math.min(4, Runtime.getRuntime().availableProcessors()), customModel);
+            int actualContext = NativeInference.contextSize();
+            if (actualContext < 512) { NativeInference.unload(); throw new IOException("模型未返回有效的实际上下文"); }
+            loadedPath = model.getAbsolutePath(); effectiveContext = actualContext; modelStage = "已加载";
         } catch (Throwable e) { modelStage = "加载失败"; throw e; }
+    }
+    private int requestedContext(PluginCall call) {
+        String path = call.getString("modelPath");
+        boolean current = loadedPath != null && (blank(path) || loadedPath.equals(path));
+        return call.getInt("contextSize", current ? effectiveContext : 12800);
     }
     @PluginMethod public void loadModel(PluginCall call) {
         int generation = taskGeneration.get();
         run(call, serial, () -> {
             if (generation != taskGeneration.get()) throw new IOException("已取消旧加载任务");
-            ensureLoaded(call.getString("modelPath"), call.getInt("contextSize", 12800));
+            ensureLoaded(call.getString("modelPath"), requestedContext(call));
             if (generation != taskGeneration.get()) { NativeInference.unload(); loadedPath = null; throw new IOException("加载已停止"); }
             return status();
         });
     }
     @PluginMethod public void tokenize(PluginCall call) {
         run(call, serial, () -> {
-            ensureLoaded(call.getString("modelPath"), call.getInt("contextSize", effectiveContext));
+            ensureLoaded(call.getString("modelPath"), requestedContext(call));
             String text = call.getString("text"); if (text == null) throw new IOException("缺少待计数文本");
             return new JSObject().put("count", NativeInference.tokenize(text)).put("exact", true).put("contextSize", effectiveContext);
         });
@@ -394,7 +438,7 @@ public class NativeAssistantPlugin extends Plugin {
         run(call, serial, () -> {
             if (generation != taskGeneration.get()) throw new IOException("已取消旧推理任务");
             if (busy) throw new IOException("已有本地任务正在运行");
-            ensureLoaded(call.getString("modelPath"), call.getInt("contextSize", 12800)); thermalCheck();
+            ensureLoaded(call.getString("modelPath"), requestedContext(call)); thermalCheck();
             if (generation != taskGeneration.get()) throw new IOException("推理已停止");
             String prompt = call.getString("prompt"); if (prompt == null) throw new IOException("缺少提示词");
             busy = true; modelStage = "正在推理";
@@ -597,7 +641,7 @@ public class NativeAssistantPlugin extends Plugin {
             if (generation != taskGeneration.get()) throw new IOException("图片分析已取消");
             JSONObject projector = defaultManifest().getJSONObject("visionProjector");
             if (!componentInstalled(projector)) throw new IOException("请先安装匹配的本地视觉组件；图片不会上传");
-            ensureLoaded(call.getString("modelPath"), call.getInt("contextSize", 12800)); thermalCheck();
+            ensureLoaded(call.getString("modelPath"), requestedContext(call)); thermalCheck();
             if (memory().availMem < projector.getLong("sizeBytes") + 600L * 1024 * 1024)
                 throw new IOException("视觉分析可用内存不足，请关闭其他应用；不会自动调用外部 API");
             JSObject image = call.getObject("image"); if (image == null) throw new IOException("缺少图片");
@@ -663,7 +707,7 @@ public class NativeAssistantPlugin extends Plugin {
     }
     private URL apiUrl(JSONObject config, String path) throws Exception {
         String base = config.optString("baseUrl", config.optString("baseURL"));
-        if (base.isBlank()) throw new IOException("请填写 Base URL，例如 https://服务地址/v1");
+        if (blank(base)) throw new IOException("请填写 Base URL，例如 https://服务地址/v1");
         URL url = new URL(base.replaceAll("/+$", "") + path);
         if (url.getUserInfo() != null) throw new IOException("URL 不应包含鉴权信息，请使用安全密钥设置");
         if (!url.getProtocol().equals("https")) {
