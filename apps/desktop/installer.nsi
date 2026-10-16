@@ -4,6 +4,7 @@
 !include "LogicLib.nsh"
 !include "x64.nsh"
 !include "${BUILD_RESOURCES_DIR}/verify-vc-command.nsh"
+!include "${BUILD_RESOURCES_DIR}/install-models-command.nsh"
 Unicode true
 RequestExecutionLevel user
 InstallDir "$LOCALAPPDATA\Programs\L-BOT"
@@ -27,6 +28,14 @@ FunctionEnd
 
 Section "安装L-BOT"
   InitPluginsDir
+  DetailPrint "正在离线展开并校验预装模型，可能需要几分钟；不会下载模型。"
+  System::Call 'kernel32::SetEnvironmentVariableW(w "LBOT_OFFLINE_SOURCE", w "$EXEDIR")i.r0'
+  System::Call 'kernel32::SetEnvironmentVariableW(w "LBOT_OFFLINE_TARGET", w "$INSTDIR")i.r0'
+  ExecWait '$\"$WINDIR\sysnative\WindowsPowerShell\v1.0\powershell.exe$\" -NoProfile -NonInteractive -EncodedCommand ${LBOT_OFFLINE_COMMAND}' $0
+  ${If} $0 != 0
+    MessageBox MB_ICONSTOP "离线模型分卷缺失、校验失败或存储不足。请把全部 L-BOT-Models 分卷与安装器放在同一目录，至少预留 8GB 空间后重试。现有个人数据不会删除。"
+    Abort
+  ${EndIf}
   SetOutPath "$PLUGINSDIR"
   File /oname=vc_redist.x64.exe "${BUILD_RESOURCES_DIR}/prerequisites/vc_redist.x64.exe"
   DetailPrint "验证 Microsoft 签名与校验值；缺少系统运行库时 Windows 会请求你的授权。"

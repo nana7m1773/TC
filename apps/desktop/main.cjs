@@ -188,8 +188,9 @@ else {
     const {createSocialSessions}=await import(pathToFileURL(path.join(root,'packages/runtime/social-sessions.mjs')).href);
     socialSessions=createSocialSessions({BrowserWindow,session,windowsUi});
     const desktopManifest=await tools.readDesktopManifest();
-    manager=new runtime.DesktopModelManager({directory:path.join(dataDir(),'models'),enginePath:await findEngine(),tools,manifest:desktopManifest});await manager.initialize();
-    speech=new voiceRuntime.DesktopSpeechManager({directory:path.join(dataDir(),'speech'),enginePath:await findEngine('whisper'),manifest:speechManifest,tools});await speech.initialize();
+    const bundledDirectory=app.isPackaged?path.join(process.resourcesPath,'preinstalled-models'):process.env.TC_BUNDLED_MODELS;
+    manager=new runtime.DesktopModelManager({bundledDirectory,directory:path.join(dataDir(),'models'),enginePath:await findEngine(),tools,manifest:desktopManifest});await manager.initialize();
+    speech=new voiceRuntime.DesktopSpeechManager({bundledDirectory,directory:path.join(dataDir(),'speech'),enginePath:await findEngine('whisper'),manifest:speechManifest,tools});await speech.initialize();
     setupHandlers();await createWindow();await createTray();
     app.on('activate',()=>{window.show();window.focus();});
   }).catch(()=>{dialog.showErrorBox('启动失败','应用组件缺失或本地存储无法访问。请重新安装完整版本。');app.quit();});

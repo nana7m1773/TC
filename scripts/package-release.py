@@ -3,6 +3,12 @@ import datetime, hashlib, json, subprocess, os
 from pathlib import Path
 from zipfile import ZIP_DEFLATED, ZipFile
 
+def file_sha(file):
+    digest=hashlib.sha256()
+    with file.open('rb') as stream:
+        while data:=stream.read(4*1024*1024): digest.update(data)
+    return digest.hexdigest()
+
 root=Path(__file__).resolve().parent.parent
 version=json.loads((root/'package.json').read_text())['version']
 out=root/'artifacts/release';out.mkdir(parents=True,exist_ok=True)
@@ -17,7 +23,7 @@ with ZipFile(source) as archive:
     assert archive.testzip() is None
     for file in sorted(set(files)):
         assert archive.read(f'L-BOT-source-{version}/'+file.relative_to(root).as_posix())==file.read_bytes()
-receipt={'verifiedAt':datetime.datetime.now(datetime.timezone.utc).isoformat(),'sourceFileCount':len(set(files)),'archiveCrcPassed':True,'allSourceBytesMatch':True,'excludes':['.git','node_modules','dist','build outputs','model weights','credentials'],'sourceZipSha256':hashlib.sha256(source.read_bytes()).hexdigest()}
+receipt={'verifiedAt':datetime.datetime.now(datetime.timezone.utc).isoformat(),'sourceFileCount':len(set(files)),'archiveCrcPassed':True,'allSourceBytesMatch':True,'excludes':['.git','node_modules','dist','build outputs','model weights','credentials'],'sourceZipSha256':file_sha(source)}
 (root/'artifacts/validation/source-package.json').write_text(json.dumps(receipt,ensure_ascii=False,indent=2)+'\n')
 report_files=list((root/'artifacts/validation').glob('*.json'))+list((root/'artifacts/validation').glob('*.png'))
 report_files += [root/'artifacts/android'/name for name in ['package-verification.json','native-host-smoke.json','speech-host-smoke.json','signature-verification.txt']]
@@ -32,7 +38,7 @@ installers=[root/f'artifacts/windows/L-BOT-Setup-{version}-x64.exe',root/f'artif
 checks=[]
 for file in installers+[source,evidence]:
     assert file.exists() and file.stat().st_size>0
-    checks.append({'name':file.name,'bytes':file.stat().st_size,'sha256':hashlib.sha256(file.read_bytes()).hexdigest(),'path':str(file)})
+    checks.append({'name':file.name,'bytes':file.stat().st_size,'sha256':file_sha(file),'path':str(file)})
 (out/'SHA256SUMS.txt').write_text(''.join(f"{item['sha256']}  {item['name']}\n" for item in checks))
 (out/'release-assets.json').write_text(json.dumps(checks,indent=2)+'\n')
 print(json.dumps({'assets':checks,'sourceFileCount':len(set(files))},ensure_ascii=False))

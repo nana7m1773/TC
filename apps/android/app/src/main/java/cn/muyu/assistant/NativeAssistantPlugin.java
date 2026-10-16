@@ -67,6 +67,55 @@ public class NativeAssistantPlugin extends Plugin {
     private volatile String pendingExportFilename;
     private static final long MAX_MODEL_BYTES = 5L * 1024 * 1024 * 1024;
 
+    private volatile long bundledCopied = 0;
+    private volatile long bundledTotal = 0;
+    private volatile String bundledError = null;
+    @Override public void load() {
+        super.load();
+        serial.execute(() -> { try { prepareBundled(); } catch (Exception error) { bundledError = error.getMessage(); modelStage = "预装模型准备失败"; } });
+    }
+    private boolean hasBundledModels() {
+        try { return Arrays.asList(getContext().getAssets().list("preinstalled-models")).contains("bundle.json"); }
+        catch (Exception ignored) { return false; }
+    }
+    private synchronized void prepareBundled() throws Exception {
+        if (!hasBundledModels()) return;
+        JSONObject model = defaultManifest(), vision = model.getJSONObject("visionProjector"), voice = speechManifest();
+        bundledTotal = model.getLong("sizeBytes") + vision.getLong("sizeBytes") + voice.getLong("sizeBytes"); bundledCopied = 0;
+        modelStage = "正在离线准备预装模型";
+        copyBundled(model, new File(modelsDir(), model.getString("filename")));
+        copyBundled(vision, componentFile(vision)); copyBundled(voice, componentFile(voice));
+        bundledError = null; modelStage = loadedPath == null ? "预装模型已就绪" : "已加载";
+    }
+    private void copyBundled(JSONObject manifest, File target) throws Exception {
+        long expectedSize = manifest.getLong("sizeBytes"); String expectedHash = manifest.getString("sha256");
+        File receipt = new File(target.getPath() + ".json");
+        if (target.isFile() && target.length() == expectedSize) {
+            if (receipt.isFile()) {
+                JSONObject saved = new JSONObject(new String(readLimited(new FileInputStream(receipt), 65536), StandardCharsets.UTF_8));
+                if (saved.optBoolean("verified") && expectedHash.equals(saved.optString("sha256")) && saved.optLong("bundledMtime", -1) == target.lastModified()) { bundledCopied += expectedSize; return; }
+            }
+            if (expectedHash.equalsIgnoreCase(fileHash(target))) { writeBundledReceipt(target, manifest); bundledCopied += expectedSize; return; }
+        }
+        if (new StatFs(dataDir().getPath()).getAvailableBytes() < expectedSize + 256L * 1024 * 1024) throw new IOException("预装模型离线展开空间不足，请释放存储后重新打开应用");
+        File partial = new File(target.getPath() + ".bundled-part");
+        try {
+            MessageDigest digest = MessageDigest.getInstance("SHA-256"); long count = 0;
+            try (InputStream in = getContext().getAssets().open("preinstalled-models/" + manifest.getString("filename")); FileOutputStream out = new FileOutputStream(partial)) {
+                byte[] buffer = new byte[1024 * 1024]; int n;
+                while ((n = in.read(buffer)) != -1) { count += n; if (count > expectedSize) throw new IOException("预装模型体积无效"); out.write(buffer, 0, n); digest.update(buffer, 0, n); bundledCopied += n; }
+                out.getFD().sync();
+            }
+            if (count != expectedSize || !expectedHash.equalsIgnoreCase(hex(digest.digest()))) throw new IOException("预装模型 SHA-256 校验失败，请重新取得完整离线安装包");
+            if (!partial.renameTo(target)) throw new IOException("预装模型无法保存，请检查应用存储");
+            writeBundledReceipt(target, manifest);
+        } finally { if (partial.exists()) partial.delete(); }
+    }
+    private void writeBundledReceipt(File file, JSONObject manifest) throws Exception {
+        JSONObject receipt = new JSONObject(manifest.toString()); receipt.put("verified", true).put("bundled", true).put("bundledMtime", file.lastModified());
+        writeComponentRecord(file, receipt);
+    }
+
     interface Work { JSObject run() throws Exception; }
     private void run(PluginCall call, ExecutorService executor, Work work) {
         executor.execute(() -> {
@@ -368,7 +417,7 @@ public class NativeAssistantPlugin extends Plugin {
         return f;
     }
     private JSObject status() {
-        JSObject out = new JSObject(); out.put("loaded", loadedPath != null); out.put("running", busy); out.put("stage", modelStage);
+        JSObject out = new JSObject(); out.put("bundled", hasBundledModels()); out.put("bundledCopiedBytes", bundledCopied); out.put("bundledTotalBytes", bundledTotal); out.put("bundledError", bundledError); out.put("loaded", loadedPath != null); out.put("running", busy); out.put("stage", modelStage);
         out.put("modelPath", loadedPath); out.put("contextSize", effectiveContext); out.put("backend", "CPU"); out.put("kvCache", "f16");
         try { out.put("localVisionInstalled", componentInstalled(defaultManifest().getJSONObject("visionProjector"))); }
         catch (Exception ignored) { out.put("localVisionInstalled", false); }
@@ -383,7 +432,7 @@ public class NativeAssistantPlugin extends Plugin {
     @PluginMethod public void modelStatus(PluginCall call) { call.resolve(status()); }
     @PluginMethod public void listModels(PluginCall call) {
         run(call, network, () -> {
-            JSArray models = new JSArray(); File[] files = modelsDir().listFiles();
+            prepareBundled(); JSArray models = new JSArray(); File[] files = modelsDir().listFiles();
             if (files != null) for (File f : files) {
                 if (!f.getName().endsWith(".gguf")) continue;
                 File metadata = new File(f.getPath() + ".json");
@@ -396,6 +445,8 @@ public class NativeAssistantPlugin extends Plugin {
     }
     private void ensureLoaded(String path, int contextSize) throws Exception {
         // An omitted path means the owner's currently loaded model, even when the default model is absent.
+        if (hasBundledModels() && bundledCopied != bundledTotal) prepareBundled();
+        if (bundledError != null) throw new IOException(bundledError);
         File model = modelFile(blank(path) ? loadedPath : path); thermalCheck();
         if (loadedPath != null && loadedPath.equals(model.getAbsolutePath()) && effectiveContext == contextSize) return;
         if (contextSize < 512 || contextSize > 32768) throw new IOException("有效上下文范围为 512–32768；默认模型验收值为 12800");

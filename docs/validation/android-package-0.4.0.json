@@ -1,0 +1,56 @@
+{
+  "verifiedAt": "2026-10-16T03:21:59.299046+00:00",
+  "apk": "/workspace/TC/artifacts/android/L-BOT-Android-0.4.0-arm64-debug.apk",
+  "apkBytes": 2101489786,
+  "sha256": "9be6d958cec593d1263f31e178c9e0d855f8cd83c9f8c6bce26f8c9648ade403",
+  "assetFiles": 3,
+  "preinstalledModelsVerified": [
+    {
+      "filename": "Qwen3.5-2B-Uncensored-HauhauCS-Aggressive-Q4_K_M.gguf",
+      "sizeBytes": 1270808032,
+      "sha256": "be3ccca13a9d1bc8b67165ea80bd103cd6151a37ad131183cc7ca388f78d9517"
+    },
+    {
+      "filename": "mmproj-Qwen3.5-2B-Uncensored-HauhauCS-Aggressive-f16.gguf",
+      "sizeBytes": 668226688,
+      "sha256": "a86ac75fbd9a11d1883c688969d88a11d3d24a729cc7e181833fd2e1b3865c9d"
+    },
+    {
+      "filename": "ggml-base.bin",
+      "sizeBytes": 147951465,
+      "sha256": "60ed5bc3dd14eea856493d334349b405782ddcaf0028d4b5df4088345fba2efe"
+    }
+  ],
+  "manifestsMatch": true,
+  "notificationServiceAndPackageQueriesPresent": true,
+  "androidOriginal2BManifestUnchanged": true,
+  "appName": "L-BOT",
+  "version": "0.4.0",
+  "signatureVerified": true,
+  "signingType": "debug",
+  "alignment16KiBPassed": true,
+  "elfLoadAlignment": {
+    "lib/arm64-v8a/libc++_shared.so": [
+      16384,
+      16384,
+      16384,
+      16384
+    ],
+    "lib/arm64-v8a/libmuyu-inference.so": [
+      16384,
+      16384,
+      16384
+    ],
+    "lib/arm64-v8a/libmuyu-speech.so": [
+      16384,
+      16384,
+      16384
+    ]
+  },
+  "androidDeviceAcceptance": "pending",
+  "assets": {
+    "index.html": "1719a227941a247e5d8853f19f75295110456983089f54509aa64166bdc2145a",
+    "assets/index-C4XF7NQp.js": "37e8390f57905263047ca249e690bca050d488b178b3121c4fd22057190610e7",
+    "assets/index-Cvl1EZ4z.css": "d8913eaf1bd9c42c2ed738f36d69d2221bde775e3e30fbc0230dc494721bab2f"
+  }
+}

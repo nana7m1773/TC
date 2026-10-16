@@ -1435,3 +1435,18 @@ hr {
   min-width: 0;
   max-width: calc(100% - 40px);
 }
+
+/* Keep every grid track shrinkable, including long model names and native paths. */
+:root {font-family:"Segoe UI","Microsoft YaHei","PingFang SC","Noto Sans CJK SC",system-ui,sans-serif;line-height:1.5}
+.sidebar {overflow-y:auto;overscroll-behavior:contain;scrollbar-gutter:stable}
+.sidebar > * {flex-shrink:0}
+.nav-item svg,.brand-icon {flex-shrink:0}
+.panel,.field,.form-grid > *,.content-grid > * {min-width:0;max-width:100%}
+.form-grid {grid-template-columns:repeat(2,minmax(0,1fr))}
+.field {overflow-wrap:anywhere}
+input,textarea,select {min-width:0;max-width:100%}
+.button {white-space:normal;overflow-wrap:anywhere;max-width:100%}
+.content-grid p,.content-grid small {overflow-wrap:anywhere}
+.topbar {min-height:70px;height:auto;gap:12px;padding-top:12px;padding-bottom:12px;flex-wrap:wrap}
+@media(max-width:1000px){.form-grid{grid-template-columns:minmax(0,1fr)}}
+@media(max-width:800px){.topbar{min-height:60px}.sidebar{max-width:calc(100vw - 28px)}}

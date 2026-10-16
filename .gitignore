@@ -29,3 +29,7 @@ apps/desktop/resources/verify-vc-command.nsh
 
 .local-models/
 .release-logs/
+
+apps/android/app/src/main/assets/preinstalled-models/
+apps/desktop/resources/install-models-command.nsh
+apps/desktop/resources/offline-models.json

@@ -1064,7 +1064,7 @@ export default function App() {
                       model.state === "ready" ||
                       model.state === "generating"
                     ? "原生模型已加载 · 实际长度以引擎状态为准"
-                    : "尚未加载模型 · 8GB 手机待实机验证"}
+                    : "模型按需加载 · 离线包已预装"}
               </small>
             </div>
           </div>
@@ -1455,8 +1455,8 @@ export default function App() {
                 发布者：HauhauCS / Qwen3.5-{desktopModel ? "9B" : "2B"}-Uncensored-HauhauCS-Aggressive，固定 revision {defaultModel.sourceRevision.slice(0, 8)}。社区版本，原版为 Qwen/Qwen3.5-{desktopModel ? "9B" : "2B"}。
               </p>
               <p className="hint">
-                下载前校验发布者元数据。若模型缺少可核实的
-                SHA-256，安装会停止；不会降低校验要求。图片和语音需要独立组件。
+                完整离线包已预装文字、视觉与语音模型；此按钮校验本机文件。若模型缺少可核实的
+                SHA-256，安装会停止；不会降低校验要求。完整离线包同时包含匹配图片与语音组件。
               </p>
               <p className="hint">Windows 默认 9B Q4_K_M；安卓默认 2B Q4_K_M。两端有效上下文均为 12,800。浏览器仅展示配置，不加载模型。</p>
               <div className="row wrap">
@@ -1467,13 +1467,13 @@ export default function App() {
                       const r = await requireRuntime().installDefault();
                       setModel(r);
                       setSelectedModelPath(undefined);
-                      setNotice("模型下载任务已执行，校验通过后方可加载。");
-                      log("执行默认模型安装");
+                      setNotice("预装模型已校验，可离线加载。");
+                      log("检查预装默认模型");
                     })
                   }
                 >
                   <ArrowDownToLine size={16} />
-                  下载默认模型
+                  检查预装模型
                 </Button>
                 <Button
                   secondary

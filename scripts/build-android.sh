@@ -21,6 +21,7 @@ command -v javac >/dev/null || { printf '%s\n' 'JDK 21 required. See docs/build.
 [[ -n "${ANDROID_HOME:-}" ]] || { printf '%s\n' 'Set ANDROID_HOME to Android SDK 35 with NDK 28.2.13676358 and CMake 3.22.1.' >&2; exit 1; }
 if [[ ! -d node_modules/@capacitor/android ]]; then npm ci; fi
 npm run build
+node scripts/prepare-preinstalled.mjs --android
 rm -rf -- apps/android/app/src/main/assets/public
 mkdir -p apps/android/app/src/main/assets/public
 cp -a dist/. apps/android/app/src/main/assets/public/
@@ -35,6 +36,6 @@ if [[ -x apps/android/gradlew ]]; then TASK_GRADLE=./gradlew; fi
 (cd apps/android && "$TASK_GRADLE" --no-daemon --max-workers=2 assembleDebug)
 TASK_APP_VERSION="$(node -p "JSON.parse(require('node:fs').readFileSync('package.json','utf8')).version")"
 mkdir -p artifacts/android
-cp apps/android/app/build/outputs/apk/debug/app-debug.apk artifacts/android/L-BOT-Android-${TASK_APP_VERSION}-arm64-debug.apk
+ln -f apps/android/app/build/outputs/apk/debug/app-debug.apk artifacts/android/L-BOT-Android-${TASK_APP_VERSION}-arm64-debug.apk
 printf '%s\n' "APK: $TASK_REPO/artifacts/android/L-BOT-Android-${TASK_APP_VERSION}-arm64-debug.apk"
 printf '%s\n' 'Debug-signed arm64 Android APK. Real 8GB device / 12800-token / 30-minute acceptance still required.'

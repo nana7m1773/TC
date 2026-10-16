@@ -22,35 +22,51 @@ const pause=ms=>new Promise(resolve=>setTimeout(resolve,ms));
 
 /** Owns a private loopback process. No renderer supplied executable or command is accepted. */
 export class DesktopModelManager {
-  constructor({directory,enginePath,tools,manifest}) {
-    this.directory=directory;this.enginePath=enginePath;this.tools=tools;
+  constructor({directory,enginePath,tools,manifest,bundledDirectory}) {
+    this.directory=directory;this.enginePath=enginePath;this.tools=tools;this.bundledDirectory=bundledDirectory;
     this.manifest=structuredClone(manifest??tools.defaultModel);this.defaultWasExplicit=manifest!==undefined;
     this.inferenceTimeoutMs=this.manifest.sizeBytes>4_000_000_000?1_200_000:300_000;
     this.current={state:'stopped',contextSize:12800,cacheType:'q8_0',backend:'CPU',inferenceTimeoutMs:this.inferenceTimeoutMs,threads:Math.max(1,Math.min(4,os.availableParallelism()))};
     this.process=null;this.busy=false;this.download=null;this.abortInference=null;this.epoch=0;this.loading=false;this.inferencePending=false;this.maintenance=false;this.visionActive=false;
   }
   async initialize() {await fs.mkdir(this.directory,{recursive:true});}
+  recordPath(record) {return path.join(record.bundled?this.bundledDirectory:this.directory,record.filename);}
+  async componentPath(component) {
+    const local=path.join(this.directory,component.filename);
+    try {await fs.access(local);return local;}catch(error){if(error.code!=='ENOENT')throw error;}
+    return this.bundledDirectory?path.join(this.bundledDirectory,component.filename):local;
+  }
   async records() {
-    try {return JSON.parse(await fs.readFile(path.join(this.directory,'models.json'),'utf8'));}
-    catch(error) {if(error.code==='ENOENT')return [];throw new LocalModelError('INDEX','本地模型索引损坏，请先备份数据。');}
+    let records=[];
+    try {records=JSON.parse(await fs.readFile(path.join(this.directory,'models.json'),'utf8'));}
+    catch(error) {if(error.code!=='ENOENT')throw new LocalModelError('INDEX','本地模型索引损坏，请先备份数据。');}
+    if(this.bundledDirectory&&!records.some(r=>r.id===this.manifest.id)){
+      try {await fs.access(path.join(this.bundledDirectory,this.manifest.filename));records.push({...this.manifest,bundled:true,sourceVerified:true});}
+      catch(error){if(error.code!=='ENOENT')throw error;}
+    }
+    return records;
   }
   async writeRecords(records) {
     const target=path.join(this.directory,'models.json');
-    await fs.writeFile(target+'.tmp',JSON.stringify(records,null,2),{mode:0o600});await fs.rename(target+'.tmp',target);
+    await fs.writeFile(target+'.tmp',JSON.stringify(records.filter(r=>!r.bundled),null,2),{mode:0o600});await fs.rename(target+'.tmp',target);
   }
   async listModels() {
     const models=[];
     for(const record of await this.records()) {
-      try {const stat=await fs.stat(path.join(this.directory,record.filename));models.push({...record,path:path.join(this.directory,record.filename),sizeBytes:stat.size});}
+      try {const stat=await fs.stat(this.recordPath(record));models.push({...record,path:this.recordPath(record),sizeBytes:stat.size});}
       catch(error) {if(error.code!=='ENOENT')throw error;}
     }
     const projector=this.manifest.visionProjector;
     let visionInstalled=false;
-    if(projector)try {await fs.access(path.join(this.directory,projector.filename));visionInstalled=true;}catch{}
+    if(projector)try {await fs.access(await this.componentPath(projector));visionInstalled=true;}catch{}
     return {models,defaultModel:{...structuredClone(this.manifest),visionProjector:projector?{...projector,installed:visionInstalled}:undefined}};
   }
-  status() {return {...this.current,engineAvailable:!!this.enginePath,downloading:!!this.download,defaultModel:structuredClone(this.manifest),maxImportBytes:this.manifest.maxImportBytes??4_000_000_000};}
+  status() {return {...this.current,preinstalled:!!this.bundledDirectory,engineAvailable:!!this.enginePath,downloading:!!this.download,defaultModel:structuredClone(this.manifest),maxImportBytes:this.manifest.maxImportBytes??4_000_000_000};}
   async installDefault() {
+    const bundled=(await this.records()).find(r=>r.id===this.manifest.id&&(r.bundled||this.bundledDirectory));
+    if(bundled){const file=this.recordPath(bundled);await this.tools.verifyModel(file,this.manifest);return {model:{...bundled,path:file}};}
+    if(this.bundledDirectory)throw new LocalModelError('BUNDLED_MISSING','预装模型缺失，请使用全部离线分卷重新安装；不会自动下载。');
+
     if(this.maintenance||this.download||this.busy||this.loading||this.inferencePending||this.visionActive)throw new LocalModelError('BUSY','另一个模型任务正在进行，请等待或停止。');
     this.maintenance=true;try{return await this.installDefaultLocked();}finally{this.maintenance=false;}
   }
@@ -74,6 +90,11 @@ export class DesktopModelManager {
     } finally {this.download=null;}
   }
   async installVision() {
+    if(this.bundledDirectory&&this.manifest.visionProjector){
+      const file=await this.componentPath(this.manifest.visionProjector);
+      try{await fs.access(file);await this.tools.verifyModel(file,{...this.manifest.visionProjector,kind:'vision-projector'});return {component:{...this.manifest.visionProjector,installed:true},status:'installed'};}catch(error){if(error.code!=='ENOENT')throw error;throw new LocalModelError('BUNDLED_MISSING','预装视觉模型缺失，请用完整离线包修复。');}
+    }
+
     if(this.maintenance||this.download||this.busy||this.loading||this.inferencePending||this.visionActive)throw new LocalModelError('BUSY','另一个模型任务正在进行，请等待或停止。');
     const component=this.manifest.visionProjector;
     if(!component?.sha256)throw new LocalModelError('COMPONENT_MISSING','当前默认模型没有经过校验的匹配视觉组件。');
@@ -119,11 +140,11 @@ export class DesktopModelManager {
     const records=await this.records();
     const requested=input.id??input.modelId;
     const explicitSelection=requested!==undefined||input.modelPath!==undefined;
-    const record=requested?records.find(x=>x.id===requested):input.modelPath?records.find(x=>path.join(this.directory,x.filename)===input.modelPath):
+    const record=requested?records.find(x=>x.id===requested):input.modelPath?records.find(x=>this.recordPath(x)===input.modelPath):
       records.find(x=>x.id===this.manifest.id)??(this.defaultWasExplicit?undefined:records[0]);
     if(!record&&!explicitSelection&&this.defaultWasExplicit)throw new LocalModelError('MISSING_DEFAULT','当前桌面默认模型尚未安装。请下载默认模型，或在列表明确选择已有模型加载。');
     if(!record)throw new LocalModelError('MISSING','请先下载默认模型或导入兼容 GGUF。');
-    return {...record,path:path.join(this.directory,record.filename)};
+    return {...record,path:this.recordPath(record)};
   }
   async loadModel(input={}) {
     if(this.busy||this.download||this.loading||this.inferencePending||this.maintenance||this.visionActive)throw new LocalModelError('BUSY','当前模型任务正在进行。');
@@ -139,9 +160,9 @@ export class DesktopModelManager {
     if(input.vision===true) {
       if(model.id!==this.manifest.id)throw new LocalModelError('MATCH','视觉组件仅能与同一版本的默认模型配对。');
       projector={...this.manifest.visionProjector,kind:'vision-projector'};
-      try {await fs.access(path.join(this.directory,projector.filename));}
+      try {await fs.access(await this.componentPath(projector));}
       catch {throw new LocalModelError('COMPONENT_MISSING','请先一键安装匹配的本地视觉组件。完全本地模式不会上传图片。');}
-      await this.tools.verifyModel(path.join(this.directory,projector.filename),projector);
+      await this.tools.verifyModel(await this.componentPath(projector),projector);
     }
     const contextSize=Number(input.contextSize??12800);
     if(!Number.isInteger(contextSize)||contextSize<512||contextSize>12800||contextSize>model.nativeContextSize)
@@ -157,7 +178,7 @@ export class DesktopModelManager {
       const args=['--model',model.path,'--ctx-size',String(contextSize),'--parallel','1','--threads',String(this.current.threads),
         '--batch-size','256','--ubatch-size','128','--n-gpu-layers','0','--flash-attn','on','--cache-type-k','q8_0','--cache-type-v','q8_0',
         '--host','127.0.0.1','--port',String(port),'--api-key-file',keyFile,'--no-context-shift','--no-webui','--jinja','--reasoning','off','--offline'];
-      if(projector)args.push('--mmproj',path.join(this.directory,projector.filename),'--image-min-tokens','256','--image-max-tokens','1024','--mtmd-batch-max-tokens','256');
+      if(projector)args.push('--mmproj',await this.componentPath(projector),'--image-min-tokens','256','--image-max-tokens','1024','--mtmd-batch-max-tokens','256');
       const child=spawn(this.enginePath,args,{cwd:path.dirname(this.enginePath),windowsHide:true,stdio:['ignore','ignore','pipe'],shell:false});
       this.process=child;
       let diagnostic='';child.stderr.on('data',chunk=>{diagnostic=(diagnostic+chunk.toString()).slice(-4000);});
@@ -257,7 +278,7 @@ export class DesktopModelManager {
       throw new LocalModelError('BUDGET','图片阶段使用 12,800 tokens 上下文，回复上限为 1–1,024 tokens。');
     const component=this.manifest.visionProjector;
     if(!component)throw new LocalModelError('COMPONENT_MISSING','请安装匹配的本地视觉组件。');
-    try {await fs.access(path.join(this.directory,component.filename));}
+    try {await fs.access(await this.componentPath(component));}
     catch {throw new LocalModelError('COMPONENT_MISSING','请先安装本地视觉组件。完全本地模式不会上传图片。');}
     const restore=this.process&&this.current.state==='ready'?{id:this.current.modelId,contextSize:this.current.contextSize}:null;
     let sessionEpoch;
@@ -306,6 +327,7 @@ export class DesktopModelManager {
   }
   async deleteModelLocked(input) {
     const model=await this.resolveModel(input);
+    if(model.bundled)throw new LocalModelError('BUNDLED','这是安装包预装模型，随应用卸载；不会删除或修改。');
     if(this.current.modelId===model.id)await this.stop();
     await fs.rm(model.path,{force:true});await fs.rm(model.path+'.part',{force:true});
     await this.writeRecords((await this.records()).filter(r=>r.id!==model.id));return {deleted:true};

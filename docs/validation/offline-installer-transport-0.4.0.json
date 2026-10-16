@@ -1,0 +1,10 @@
+{
+  "host": "Linux PowerShell 7; not Windows installer execution",
+  "transportFixtures": true,
+  "passed": [
+    "complete offline volumes reconstructed and SHA verified",
+    "missing volume refused before replacement",
+    "same-size corrupt volume refused; no partially verified model published"
+  ],
+  "result": "Preinstalled text, vision and speech models verified. No network download was used."
+}

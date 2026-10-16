@@ -2,24 +2,33 @@
 
 **主作者：Hebe · 赞助商：Zijie**
 
-L-BOT `0.3.0` 为 Windows / Android 提供从真实应用取得消息、用 AI 起草、本人审核再回复的操作入口；“我的表达”可直接进入风格试用。默认使用本地模型，也保留 DeepSeek、豆包／火山方舟、千问／百炼和其他 OpenAI 兼容 API。仓库为 [nana7m1773/TC](https://github.com/nana7m1773/TC)。
+L-BOT `0.4.0` 为 Windows / Android 提供从真实应用取得消息、用 AI 起草、本人审核再回复的操作入口；“我的表达”可直接进入风格试用。默认使用本地模型，也保留 DeepSeek、豆包／火山方舟、千问／百炼和其他 OpenAI 兼容 API。仓库为 [nana7m1773/TC](https://github.com/nana7m1773/TC)。
 
 Windows 从“账号连接”打开官方网页登录窗口或已安装客户端，再到“桌面界面接入”选择聊天窗口，确认消息、生成、编辑并发送一次。Android 从“账号连接”授权系统通知，对实际收到的通知生成回复；只有通知提供回复动作时才能提交，没有回复动作就复制草稿并打开原 App。五个平台的可用能力取决于实际客户端和通知，打开登录窗口不会自动取得完整聊天记录。
 
+## 0.4.0 离线预装与布局修复
+
+已修复建议与演练卡片贴边、长文字撑开表单、缩放时内容越界和侧栏无法滚动。真实 Electron 100%／125%／150% 缩放及五种浏览器窗口尺寸已检查，70 项界面流程通过。
+
+**完整离线包包含文字模型、匹配视觉模型和 Whisper，安装后不需要下载模型。** Windows 默认 9B Q4_K_M、Android 默认 2B Q4_K_M，默认完整上下文均为 12,800。
+
+- **Windows：必须同时下载 EXE 和 6 个 `L-BOT-Models-0.4.0-01.bin` 至 `06.bin`，放在同一个目录，再运行 EXE。** GitHub 单个附件体积限制使 9B 无法装进单个 EXE；分卷是安装包的一部分。安装器离线展开、校验并安装，缺卷或校验失败会停止。
+- **Android：只需一个 APK，约 2.10 GB。** APK 内已有 2B、匹配 projector 和 Whisper；首次启动在后台离线展开并校验，请预留至少 6 GB 可用存储。默认模型在首次生成时加载，不自动上传消息。
+
 ## 三步开始
 
-1. 从 [v0.3.0 Release](https://github.com/nana7m1773/TC/releases/tag/v0.3.0) 下载对应安装包，按 `SHA256SUMS.txt` 校验后安装；已有 `0.2.0` 请升级。
-2. 在“本地模型”下载、校验并加载默认模型；也可在“自定义 API”保存服务配置并测试。模型权重不包含在安装器中，应用已带原生引擎，无需另装 Python 或模型服务器。
+1. 从 [v0.4.0 Release](https://github.com/nana7m1773/TC/releases/tag/v0.4.0) 下载对应安装包，按 `SHA256SUMS.txt` 校验后安装；已有 `0.2.0` 请升级。
+2. 离线安装完成后直接使用默认模型；首次生成自动加载，也可在“自定义 API”保存服务配置并测试。完整离线包已包含指定模型及原生引擎，无需在应用内下载，也无需另装 Python 或模型服务器。
 3. 在“账号连接”按本机提示打开聊天应用；或先到“我的表达”保存本人原句，点击“试用我的表达生成回复”。具体步骤见 [安装教程](docs/INSTALL.md) 和 [使用指南](docs/USER_GUIDE.md)。
 
 | 文件 | 下载 |
 | --- | --- |
-| Windows 10/11 x64 | [L-BOT-Setup-0.3.0-x64.exe](https://github.com/nana7m1773/TC/releases/download/v0.3.0/L-BOT-Setup-0.3.0-x64.exe) |
-| Android arm64 | [L-BOT-Android-0.3.0-arm64-debug.apk](https://github.com/nana7m1773/TC/releases/download/v0.3.0/L-BOT-Android-0.3.0-arm64-debug.apk) |
-| 源码 | [L-BOT-source-0.3.0.zip](https://github.com/nana7m1773/TC/releases/download/v0.3.0/L-BOT-source-0.3.0.zip) |
-| 验证资料 | [L-BOT-validation-0.3.0.zip](https://github.com/nana7m1773/TC/releases/download/v0.3.0/L-BOT-validation-0.3.0.zip) |
+| Windows 10/11 x64 | [L-BOT-Setup-0.4.0-x64.exe](https://github.com/nana7m1773/TC/releases/download/v0.4.0/L-BOT-Setup-0.4.0-x64.exe) |
+| Android arm64 | [L-BOT-Android-0.4.0-arm64-debug.apk](https://github.com/nana7m1773/TC/releases/download/v0.4.0/L-BOT-Android-0.4.0-arm64-debug.apk) |
+| 源码 | [L-BOT-source-0.4.0.zip](https://github.com/nana7m1773/TC/releases/download/v0.4.0/L-BOT-source-0.4.0.zip) |
+| 验证资料 | [L-BOT-validation-0.4.0.zip](https://github.com/nana7m1773/TC/releases/download/v0.4.0/L-BOT-validation-0.4.0.zip) |
 
-Windows 安装器未签名，Android APK 使用调试签名。`0.2.0` 的旧安装器已移除，历史源码及报告保留；它的模拟结果不代表 `0.3.0` 已在真实社交客户端发送成功。
+Windows 安装器未签名，Android APK 使用调试签名。`0.2.0` 的旧安装器已移除，历史源码及报告保留；它的模拟结果不代表 `0.4.0` 已在真实社交客户端发送成功。
 
 ## 实际操作入口
 
@@ -40,13 +49,13 @@ Windows 安装器未签名，Android APK 使用调试签名。`0.2.0` 的旧安�
 | Windows | HauhauCS Qwen3.5-9B **Q4_K_M**，约 5.63 GB | **12,800 tokens**，包含输入与输出预留 | 至少 16 GiB 物理内存、8.5 GB 可用存储；速度取决于设备 |
 | Android | HauhauCS Qwen3.5-2B **Q4_K_M**，约 1.27 GB | **12,800 tokens**，包含输入与输出预留 | 至少 3 GB 可用存储；8GB 物理 RAM 目标仍待实机验收 |
 
-默认模型版本与校验清单保持不变。Windows 9B 匹配视觉组件约 922 MB，Android 2B 匹配组件约 668 MB；Whisper Base 多语言模型约 148 MB，均独立下载并校验，2B 与 9B projector 不能混用。导入其他兼容 GGUF 后需实际加载，生成沿用已加载的模型路径及实际上下文；导入文字模型不会自动获得视觉能力。
+默认模型版本与校验清单保持不变。Windows 9B 匹配视觉组件约 922 MB，Android 2B 匹配组件约 668 MB；Whisper Base 多语言模型约 148 MB，均已包含在完整离线包中并校验，2B 与 9B projector 不能混用。导入其他兼容 GGUF 后需实际加载，生成沿用已加载的模型路径及实际上下文；导入文字模型不会自动获得视觉能力。
 
 API 配置支持编辑地址、模型 ID、模型列表和固定测试消息。使用 API 前明确允许本次内容上传；本地失败不会自动改用云端。付费服务需使用者自己的有效凭据，适配器测试不能代替供应商联调。
 
 ## 验证资料
 
-`0.3.0` 的 Android Java／JNI 构建及 lint 已通过（0 错误、6 警告）；Windows 窗口脚本已完成语法检查、.NET Framework 4.8／C# 5 兼容编译及 41 项窗口协议测试。214 项模块测试和 64 项完整浏览器流程通过，另有新回归的定向测试；真实 Linux Electron / preload / IPC / 本地 9B 已完成建议生成。浏览器测试用于核对交互与桥接参数。这些检查没有证明五个 Windows／Android 真实客户端均已完成登录和发送，具体执行记录见本版验证包。
+`0.4.0` 的 Android Java／JNI、APK 构建和完整预装模型校验通过；Windows 窗口脚本已完成语法检查、.NET Framework 4.8／C# 5 兼容编译及 41 项窗口协议测试。216 项模块测试和 70 项完整浏览器流程通过；真实 Linux Electron / preload / IPC / 本地 9B 已完成建议生成。浏览器测试用于核对交互与桥接参数。这些检查没有证明五个 Windows／Android 真实客户端均已完成登录和发送，具体执行记录见本版验证包。
 
 `0.2.0` 的 Linux CPU 真实 9B 五平台模拟、近满上下文、图片和 Whisper 报告保留作历史证据；发送回执来自模拟通道，不能当作真实客户端回执，也不能当作 Windows 速度或 Android 内存验收。参见 [验收记录](docs/VALIDATION.md)、[登录与平台权限](docs/LOGIN_AND_PERMISSIONS.md) 和 [平台能力表](docs/PLATFORM_CAPABILITIES.md)，其中旧版说明应结合本页与本版操作指南阅读。
 

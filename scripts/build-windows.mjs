@@ -2,6 +2,7 @@ import {spawn} from 'node:child_process';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
 import fs from 'node:fs/promises';
+import {offlinePlan} from './offline-model-plan.mjs';
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
 const run=(command,args)=>new Promise((resolve,reject)=>{
   const child=spawn(command,args,{cwd:root,stdio:'inherit',shell:false,env:{...process.env,CSC_IDENTITY_AUTO_DISCOVERY:'false',
@@ -14,6 +15,10 @@ try {
   await run(process.execPath,['scripts/prepare-engine.mjs','--platform','win-x64']);
   await run(process.execPath,['scripts/prepare-engine.mjs','--speech']);
   await run(process.execPath,['scripts/prepare-engine.mjs','--vc-runtime']);
+  const plan=await offlinePlan();
+  const offlineScript=await fs.readFile(path.join(root,'apps/desktop/install-preinstalled-models.ps1'),'utf8');
+  const embeddedScript="$env:LBOT_OFFLINE_PLAN = @'\n"+JSON.stringify(plan)+"\n'@\n"+offlineScript;
+  await fs.writeFile(path.join(root,'apps/desktop/resources/install-models-command.nsh'),`!define LBOT_OFFLINE_COMMAND "${Buffer.from(embeddedScript,'utf16le').toString('base64')}"\n`);
   const prerequisiteScript=await fs.readFile(path.join(root,'apps/desktop/verify-vc-runtime.ps1'),'utf8');
   await fs.writeFile(path.join(root,'apps/desktop/resources/verify-vc-command.nsh'),
     `; Generated from apps/desktop/verify-vc-runtime.ps1 by the build script.\n!define TC_VC_COMMAND "${Buffer.from(prerequisiteScript,'utf16le').toString('base64')}"\n`);

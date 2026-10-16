@@ -1,0 +1,41 @@
+{
+  "host": "Linux actual Electron 44.7.0 and actual model files; not Windows/Android device acceptance",
+  "checks": [
+    {
+      "name": "actual-bundled-9b-list",
+      "models": [
+        {
+          "name": "Qwen3.5 9B · HauhauCS · Q4_K_M",
+          "path": "/workspace/.cache/models/Qwen3.5-9B-Uncensored-HauhauCS-Aggressive-Q4_K_M.gguf",
+          "bundled": true
+        }
+      ]
+    },
+    {
+      "name": "verify-preinstalled-without-downloading",
+      "path": "/workspace/.cache/models/Qwen3.5-9B-Uncensored-HauhauCS-Aggressive-Q4_K_M.gguf"
+    },
+    {
+      "name": "actual-electron-zoom",
+      "zoom": 1,
+      "viewport": 1440,
+      "scroll": 1425,
+      "cardPadding": "24px"
+    },
+    {
+      "name": "actual-electron-zoom",
+      "zoom": 1.25,
+      "viewport": 1152,
+      "scroll": 1140,
+      "cardPadding": "24px"
+    },
+    {
+      "name": "actual-electron-zoom",
+      "zoom": 1.5,
+      "viewport": 960,
+      "scroll": 950,
+      "cardPadding": "24px"
+    }
+  ],
+  "passed": true
+}

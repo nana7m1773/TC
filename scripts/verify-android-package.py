@@ -13,6 +13,16 @@ with ZipFile(apk) as archive:
     assert expected.keys() == embedded.keys(), 'APK contains stale/missing web assets'
     for name, data in expected.items():
         assert embedded[name] == data, f'UI bytes differ: {name}'
+    bundled_models = [json.loads(archive.read('assets/default-model.json'))]
+    bundled_models += [bundled_models[0]['visionProjector'], json.loads(archive.read('assets/local-speech.json'))]
+    for bundled in bundled_models:
+        name = 'assets/preinstalled-models/' + bundled['filename']
+        info = archive.getinfo(name)
+        assert info.file_size == bundled['sizeBytes'] and info.compress_type == 0, 'Bundled model must be complete and uncompressed'
+        digest = hashlib.sha256()
+        with archive.open(name) as stream:
+            while block := stream.read(4 * 1024 * 1024): digest.update(block)
+        assert digest.hexdigest() == bundled['sha256'], f'Bundled model checksum: {name}'
     for name in ['default-model.json', 'local-speech.json']:
         assert archive.read('assets/' + name) == (root / 'resources' / name).read_bytes(), f'Manifest differs: {name}'
     model = json.loads(archive.read('assets/default-model.json'))
@@ -43,7 +53,7 @@ manifest_dump = subprocess.run([str(tooling / 'aapt'), 'dump', 'xmltree', str(ap
 assert 'cn.muyu.assistant.SocialNotificationService' in manifest_dump and 'android.permission.BIND_NOTIFICATION_LISTENER_SERVICE' in manifest_dump
 for package_name in ['com.tencent.mobileqq', 'com.tencent.mm', 'tv.danmaku.bili', 'com.sina.weibo', 'com.whatsapp', 'com.whatsapp.w4b']:
     assert package_name in manifest_dump, f'Missing package visibility: {package_name}'
-report = {'verifiedAt': __import__('datetime').datetime.now(__import__('datetime').timezone.utc).isoformat(), 'apk': str(apk), 'apkBytes': apk.stat().st_size, 'sha256': hashlib.sha256(apk.read_bytes()).hexdigest(), 'assetFiles': len(expected), 'manifestsMatch': True, 'notificationServiceAndPackageQueriesPresent': True, 'androidOriginal2BManifestUnchanged': True, 'appName': 'L-BOT', 'version': version, 'signatureVerified': True, 'signingType': 'debug', 'alignment16KiBPassed': True, 'elfLoadAlignment':elf_alignment, 'androidDeviceAcceptance': 'pending', 'assets': {name: hashlib.sha256(data).hexdigest() for name, data in expected.items()}}
+report = {'verifiedAt': __import__('datetime').datetime.now(__import__('datetime').timezone.utc).isoformat(), 'apk': str(apk), 'apkBytes': apk.stat().st_size, 'sha256': hashlib.sha256(apk.read_bytes()).hexdigest(), 'assetFiles': len(expected), 'preinstalledModelsVerified': [{k:m[k] for k in ['filename','sizeBytes','sha256']} for m in bundled_models], 'manifestsMatch': True, 'notificationServiceAndPackageQueriesPresent': True, 'androidOriginal2BManifestUnchanged': True, 'appName': 'L-BOT', 'version': version, 'signatureVerified': True, 'signingType': 'debug', 'alignment16KiBPassed': True, 'elfLoadAlignment':elf_alignment, 'androidDeviceAcceptance': 'pending', 'assets': {name: hashlib.sha256(data).hexdigest() for name, data in expected.items()}}
 (root / 'artifacts/android/package-verification.json').write_text(json.dumps(report, ensure_ascii=False, indent=2) + '\n')
 (root / 'artifacts/android/signature-verification.txt').write_text(signature)
 print(json.dumps(report, ensure_ascii=False))

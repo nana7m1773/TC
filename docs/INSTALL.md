@@ -2,55 +2,63 @@
 
 主作者：**Hebe**；赞助商：**Zijie**。
 
-安装 `0.3.0` 后，Windows 可从“账号连接”打开官方聊天应用，再按窗口生成并审核回复；Android 可接收实际系统通知，在通知支持回复时审核提交。“我的表达”提供直接试用入口。仓库为 [nana7m1773/TC](https://github.com/nana7m1773/TC)。
+安装 `0.4.0` 后，Windows 可从“账号连接”打开官方聊天应用，再按窗口生成并审核回复；Android 可接收实际系统通知，在通知支持回复时审核提交。“我的表达”提供直接试用入口。仓库为 [nana7m1773/TC](https://github.com/nana7m1773/TC)。
 
 快速开始：**下载安装 → 准备本地模型或 API → 接入真实应用并审核回复**。Windows 安装器未签名，Android APK 使用调试签名。
 
+## 本版完整离线安装（请优先按此步骤）
+
+**Windows**：从本版 Release 下载 `L-BOT-Setup-0.4.0-x64.exe` 及全部 6 个 `L-BOT-Models-0.4.0-01.bin` ～ `06.bin`。保持原文件名，全部放在同一个目录，双击 EXE。无需合并、解压或另装工具；安装器自行离线展开并核对固定 SHA-256。预留至少 8 GB 可用安装空间。缺卷、下载不完整、哈希失败或空间不足时修复后重试，不会自动下载模型，也不删除个人数据。
+
+**Android**：下载约 2.10 GB 的 APK 即可，文字、图片、语音模型已全部包含。建议安装前至少 6 GB 可用存储，首次启动等待“预装模型已就绪”。这个过程只从 APK 复制并校验，不连接模型下载服务；请勿在准备时清理应用数据。已准备好的模型以后不重复复制。
+
+首次生成会按需加载模型。“本地模型 → 检查预装模型”用于核实本机默认文件；也可加载其他 GGUF 或选择 API。缺少／损坏离线文件时使用完整安装包修复，API 配置及使用仍需本人授权。
+
 ## 取得文件与校验
 
-下载见 [v0.3.0 Release](https://github.com/nana7m1773/TC/releases/tag/v0.3.0)。请选择与你的平台对应的安装包，并核对校验清单。
+下载见 [v0.4.0 Release](https://github.com/nana7m1773/TC/releases/tag/v0.4.0)。请选择与你的平台对应的安装包，并核对校验清单。
 
 | 平台／资料 | 固定下载入口 |
 | --- | --- |
-| Windows 10/11 x64 | [L-BOT-Setup-0.3.0-x64.exe](https://github.com/nana7m1773/TC/releases/download/v0.3.0/L-BOT-Setup-0.3.0-x64.exe) |
-| Android arm64 | [L-BOT-Android-0.3.0-arm64-debug.apk](https://github.com/nana7m1773/TC/releases/download/v0.3.0/L-BOT-Android-0.3.0-arm64-debug.apk) |
-| 源码 | [L-BOT-source-0.3.0.zip](https://github.com/nana7m1773/TC/releases/download/v0.3.0/L-BOT-source-0.3.0.zip) |
-| 验证资料 | [L-BOT-validation-0.3.0.zip](https://github.com/nana7m1773/TC/releases/download/v0.3.0/L-BOT-validation-0.3.0.zip) |
+| Windows 10/11 x64 | [L-BOT-Setup-0.4.0-x64.exe](https://github.com/nana7m1773/TC/releases/download/v0.4.0/L-BOT-Setup-0.4.0-x64.exe) |
+| Android arm64 | [L-BOT-Android-0.4.0-arm64-debug.apk](https://github.com/nana7m1773/TC/releases/download/v0.4.0/L-BOT-Android-0.4.0-arm64-debug.apk) |
+| 源码 | [L-BOT-source-0.4.0.zip](https://github.com/nana7m1773/TC/releases/download/v0.4.0/L-BOT-source-0.4.0.zip) |
+| 验证资料 | [L-BOT-validation-0.4.0.zip](https://github.com/nana7m1773/TC/releases/download/v0.4.0/L-BOT-validation-0.4.0.zip) |
 
 下载后，使用 Release 提供的 `SHA256SUMS.txt` 核对对应文件。Windows PowerShell：
 
 ```powershell
-Get-FileHash .\L-BOT-Setup-0.3.0-x64.exe -Algorithm SHA256
-Get-FileHash .\L-BOT-Android-0.3.0-arm64-debug.apk -Algorithm SHA256
+Get-FileHash .\L-BOT-Setup-0.4.0-x64.exe -Algorithm SHA256
+Get-FileHash .\L-BOT-Android-0.4.0-arm64-debug.apk -Algorithm SHA256
 ```
 
 Linux：`sha256sum 文件名`；macOS：`shasum -a 256 文件名`。与校验清单逐字比较，文件名对应且哈希相同再使用。哈希能检查文件一致性，不能代替发布者代码签名。
 
 ## Windows 三步安装与接入
 
-1. 在 Windows 10/11 x64 运行 `L-BOT-Setup-0.3.0-x64.exe`，按中文向导安装到当前用户目录。若缺少 Visual C++ x64 运行库，安装器核验固定 SHA-256 与 Microsoft 签名后通过正常 UAC 安装。9B 模型建议至少 16 GiB 物理内存及 8.5 GB 可用存储；Whisper x64 CPU 引擎要求 AVX2、FMA、F16C。
-2. 打开“本地模型”，下载、校验并加载默认 9B；也可在“自定义 API”保存有效配置并测试。安装器含原生引擎，不含模型权重。首次加载及 CPU 生成可能需等待几分钟，可查看页面进度。
+1. 在 Windows 10/11 x64 运行 `L-BOT-Setup-0.4.0-x64.exe`，按中文向导安装到当前用户目录。若缺少 Visual C++ x64 运行库，安装器核验固定 SHA-256 与 Microsoft 签名后通过正常 UAC 安装。9B 模型建议至少 16 GiB 物理内存及 8.5 GB 可用存储；Whisper x64 CPU 引擎要求 AVX2、FMA、F16C。
+2. 完整离线安装已预装默认 9B，首次生成自动加载；也可在“自定义 API”保存有效配置并测试。安装器和所需模型分卷合起来构成完整离线安装包。首次加载及 CPU 生成可能需等待几分钟，可查看页面进度。
 3. 打开“账号连接”，选择“打开官方网页登录”或“打开本机客户端”，由本人登录。再点“选择聊天窗口”，读取或截图，确认会话与消息，选择输入框和发送方式，生成、编辑并“核对草稿并发送一次”。详见 [窗口操作](COMPUTER_USE.md)。
 
 哔哩哔哩、微博、WhatsApp、微信提供隔离的官方网页登录窗口；QQ 个人号没有官方网页私信入口，使用已安装 QQ 客户端。微信账号不能使用网页版时，改用本机微信。应用会区分“已请求打开窗口”和“登录未验证”，不会把打开网页当成消息已连接。
 
 ## Android 三步安装与接入
 
-1. 在 arm64 Android 设备安装 `L-BOT-Android-0.3.0-arm64-debug.apk`。系统提示时，仅为用于安装的文件管理器／浏览器允许“安装未知应用”。最低 Android 6.0 / API 23，目标 SDK 35。
-2. 在“本地模型”下载、校验并加载默认 2B，建议保留至少 3 GB 存储余量；视觉与语音组件另需空间。先用“建议与演练”生成一句回复，确认模型可用。
+1. 在 arm64 Android 设备安装 `L-BOT-Android-0.4.0-arm64-debug.apk`。系统提示时，仅为用于安装的文件管理器／浏览器允许“安装未知应用”。最低 Android 6.0 / API 23，目标 SDK 35。
+2. APK 已预装默认 2B、视觉与语音组件，请等待首次离线展开完成。先用“建议与演练”生成一句回复，确认模型可用。
 3. 在“账号连接”点“打开系统通知使用权设置”，为 L-BOT 授权；打开本机官方 App，确认登录和消息通知已启用，再回到 L-BOT 刷新接入状态，等待一条真实新通知。点“生成回复建议”，编辑审核；通知有 RemoteInput 回复动作才能“审核并发送一次”，否则“复制回复草稿”并打开原 App 粘贴发送。
 
 通知只包含系统实际投递的内容，可能被客户端隐藏或合并；不读取完整聊天历史，也不保证五个平台都提供通知回复。每个应用的“仅前台自动回复”默认关闭；启用后仅处理本页前台收到的新通知，遇到需审核或结果未知即停止。离页、后台或暂停会撤销本次自动授权；系统省电杀进程后不承诺继续回复。麦克风仅在主动录音并允许系统权限后使用。
 
 ## 从 0.2.0 升级
 
-`0.2.0` 已作为旧版保留，请安装 `0.3.0` 修正版。升级前在“运行与数据”导出加密备份，保留原有应用数据；Windows 继续使用原用户的数据位置。
+`0.2.0` 已作为旧版保留，请安装 `0.4.0` 修正版。升级前在“运行与数据”导出加密备份，保留原有应用数据；Windows 继续使用原用户的数据位置。
 
 Android 同一 `applicationId` 的更新需要兼容签名。签名冲突时不要直接清数据：先在旧版导出加密备份，再按系统提示处理。卸载或更换签名可能丢失本地状态；API Key 不随备份导出，恢复后重新填写。导入备份会暂停并关闭自动发送，重新核对规则后再授权。
 
 ## 首次模型准备
 
-安装器包含 llama.cpp／mtmd 与 whisper.cpp 原生引擎，**不含模型权重**。模型下载来源、版本、大小和 SHA-256 固定在 `resources/` 清单中。
+完整离线安装文件包含 llama.cpp／mtmd、whisper.cpp 原生引擎和指定模型权重。模型下载来源、版本、大小和 SHA-256 固定在 `resources/` 清单中。
 
 | 项目 | Windows | Android |
 | --- | --- | --- |
@@ -59,7 +67,7 @@ Android 同一 `applicationId` 的更新需要兼容签名。签名冲突时不�
 | 匹配视觉组件（可选） | 9B BF16 projector，921,704,448 bytes | 2B F16 projector，668,226,688 bytes |
 | 语音组件（可选） | Whisper Base 多语言，147,951,465 bytes | 同左 |
 
-在“本地模型”分别下载需要的组件，等待完整校验成功后加载。校验失败、中断、空间不足或引擎不可用时查看明确错误；半文件不算已安装。组件准备好后，本地处理可离线进行，首次下载模型不等于上传聊天。
+本版模型和组件已预装，等待首次本机校验后即可加载。校验失败、中断、空间不足或引擎不可用时查看明确错误；半文件不算已安装。组件准备好后，本地处理可离线进行，首次下载模型不等于上传聊天。
 
 可导入有权使用且在支持架构范围内的 GGUF 文字模型。导入检查与实际加载是两个步骤；其他模型的上下文能力受文件和引擎限制。加载自定义模型后，生成沿用其路径与实际上下文；页面显示有效长度，不把较短上下文算作默认 12,800 验收。当前视觉路径使用本平台默认模型的匹配 projector，不支持任意 GGUF 与任意 projector 组合。2B 与 9B 组件不要混用。
 
@@ -127,7 +135,7 @@ Windows x64 安装器：
 npm run build:windows
 ```
 
-脚本准备固定且经 SHA-256 校验的 Windows CPU 引擎、Whisper 引擎和 VC++ 前置安装器，构建前端，再生成 `artifacts/windows/L-BOT-Setup-0.3.0-x64.exe`。Linux 可以进行交叉打包，但不能运行 Windows 安装验收；Windows 签名、DPAPI、托盘和 UIA 必须在目标系统检查。
+脚本准备固定且经 SHA-256 校验的 Windows CPU 引擎、Whisper 引擎和 VC++ 前置安装器，构建前端，再生成 `artifacts/windows/L-BOT-Setup-0.4.0-x64.exe`。Linux 可以进行交叉打包，但不能运行 Windows 安装验收；Windows 签名、DPAPI、托盘和 UIA 必须在目标系统检查。
 
 Android 当前提供 Linux 工具链脚本：
 
@@ -145,7 +153,7 @@ export LLAMA_SOURCE_DIR="$PWD/.cache/llama.cpp-android"
 export WHISPER_SOURCE_DIR="$PWD/.cache/whisper.cpp"
 ```
 
-脚本固定 JDK 21.0.8+9、Gradle 8.11.1、SDK / build-tools 35、NDK 28.2.13676358 和 CMake 3.22.1，下载保留官方校验，并接受 Android SDK 许可证。构建固定 llama.cpp／whisper.cpp ARM64 原生库，输出 `artifacts/android/L-BOT-Android-0.3.0-arm64-debug.apk`。
+脚本固定 JDK 21.0.8+9、Gradle 8.11.1、SDK / build-tools 35、NDK 28.2.13676358 和 CMake 3.22.1，下载保留官方校验，并接受 Android SDK 许可证。构建固定 llama.cpp／whisper.cpp ARM64 原生库，输出 `artifacts/android/L-BOT-Android-0.4.0-arm64-debug.apk`。
 
 更多云机代理、缓存、工具链与许可信息见 [构建说明](BUILD.md)；仓库开发技能见 [SKILLS.md](SKILLS.md)。使用已有 checkout；云任务本身已隔离，除非使用者明确要求，不额外创建 worktree。
 

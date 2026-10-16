@@ -30,9 +30,16 @@ export function validateLocalAudio(audio,manifest) {
 
 /** A short-lived whisper.cpp CPU process; files and raw output stay local and are removed afterward. */
 export class DesktopSpeechManager {
-  constructor({directory,enginePath,manifest,tools}) {this.directory=directory;this.enginePath=enginePath;this.manifest=manifest;this.tools=tools;this.process=null;this.download=null;this.busy=false;}
+  constructor({directory,enginePath,manifest,tools,bundledDirectory}) {this.directory=directory;this.bundledDirectory=bundledDirectory;this.enginePath=enginePath;this.manifest=manifest;this.tools=tools;this.process=null;this.download=null;this.busy=false;}
   async initialize() {await fs.mkdir(this.directory,{recursive:true});}
+  async modelPath(){
+    const local=path.join(this.directory,this.manifest.filename);
+    try{await fs.access(local);return local;}catch(error){if(error.code!=='ENOENT')throw error;}
+    return this.bundledDirectory?path.join(this.bundledDirectory,this.manifest.filename):local;
+  }
   async installSpeech() {
+    if(this.bundledDirectory){const model=await this.modelPath();try{await fs.access(model);await this.tools.verifyModel(model,this.manifest);return {component:{...this.manifest,installed:true},status:'installed'};}catch(error){if(error.code!=='ENOENT')throw error;throw new LocalModelError('BUNDLED_MISSING','预装语音模型缺失，请用完整离线包修复。');}}
+
     if(this.busy||this.download)throw new LocalModelError('BUSY','另一个语音任务正在进行。');
     this.download=new AbortController();
     try {
@@ -47,7 +54,7 @@ export class DesktopSpeechManager {
     const language=String(input.language??'auto');
     if(!this.manifest.languages.includes(language))throw new LocalModelError('LANGUAGE','请选择中文、英文或自动识别。');
     if(!this.enginePath)throw new LocalModelError('ENGINE','安装包缺少内置语音引擎。请安装完整版本，无需安装 Python 或独立 AI 软件。');
-    const model=path.join(this.directory,this.manifest.filename);
+    const model=await this.modelPath();
     try {await fs.access(model);}catch {throw new LocalModelError('COMPONENT_MISSING','请先安装本地 Whisper Base 多语言语音模型。完全本地模式不会上传录音。');}
     this.busy=true;const task=path.join(this.directory,'.transcribe-'+randomUUID());
     let timer;
