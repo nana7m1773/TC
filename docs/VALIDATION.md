@@ -7,7 +7,7 @@
 - 70 项浏览器流程通过，包含 1440／1024／960／853／390 宽度的所有导航页面横向溢出检查，以及建议卡片实际内边距检查。
 - 原生 Linux Electron 44.7.0 在 100%、125%、150% 的真实 webContents 缩放下完成截图和几何检查。使用 native capturePage 保存实际像素；不把 Windows 字体渲染或 Android 实机算作已验收。
 - 实际 9B 安装目录被运行时发现并完成 SHA 校验，不再需要用户下载；两个新增预装运行时测试覆盖导入模型保留、缺失／篡改拒绝和不得自动联网。
-- 216 项模块通过；1 项 Windows 真机夹具在 Linux 跳过。PowerShell 离线安装脚本解析通过，Linux PowerShell 传输用例验证完整／缺卷／同体积损坏及发布前校验；不等于实际 Windows 安装。
+- 217 项模块通过；1 项 Windows 真机夹具在 Linux 跳过。PowerShell 离线安装脚本解析通过，Linux PowerShell 传输用例验证完整／缺卷／同体积损坏及发布前校验；不等于实际 Windows 安装。
 - Android APK 2,101,489,786 bytes，包含 2B Q4_K_M、匹配视觉组件、Whisper。三份实物在 APK 中的字节数与 SHA 均符合 pinned manifest；debug 签名、16KiB 对齐通过。
 - 已签名 APK 经去除模型数据区的稀疏模板传输并本机重建，完整 SHA `9be6d958cec593d1263f31e178c9e0d855f8cd83c9f8c6bce26f8c9648ade403` 与原 APK 一致，原签名字节不变。
 

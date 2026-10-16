@@ -6,5 +6,7 @@
     "missing volume refused before replacement",
     "same-size corrupt volume refused; no partially verified model published"
   ],
-  "result": "Preinstalled text, vision and speech models verified. No network download was used."
+  "result": "Preinstalled text, vision and speech models verified. No network download was used.",
+  "actualCompactEncodedCommandPassed": true,
+  "productionEncodedCommandCharacters": 7640
 }

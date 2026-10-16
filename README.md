@@ -55,7 +55,7 @@ API 配置支持编辑地址、模型 ID、模型列表和固定测试消息。�
 
 ## 验证资料
 
-`0.4.0` 的 Android Java／JNI、APK 构建和完整预装模型校验通过；Windows 窗口脚本已完成语法检查、.NET Framework 4.8／C# 5 兼容编译及 41 项窗口协议测试。216 项模块测试和 70 项完整浏览器流程通过；真实 Linux Electron / preload / IPC / 本地 9B 已完成建议生成。浏览器测试用于核对交互与桥接参数。这些检查没有证明五个 Windows／Android 真实客户端均已完成登录和发送，具体执行记录见本版验证包。
+`0.4.0` 的 Android Java／JNI、APK 构建和完整预装模型校验通过；Windows 窗口脚本已完成语法检查、.NET Framework 4.8／C# 5 兼容编译及 41 项窗口协议测试。217 项模块测试和 70 项完整浏览器流程通过；真实 Linux Electron / preload / IPC / 本地 9B 已完成建议生成。浏览器测试用于核对交互与桥接参数。这些检查没有证明五个 Windows／Android 真实客户端均已完成登录和发送，具体执行记录见本版验证包。
 
 `0.2.0` 的 Linux CPU 真实 9B 五平台模拟、近满上下文、图片和 Whisper 报告保留作历史证据；发送回执来自模拟通道，不能当作真实客户端回执，也不能当作 Windows 速度或 Android 内存验收。参见 [验收记录](docs/VALIDATION.md)、[登录与平台权限](docs/LOGIN_AND_PERMISSIONS.md) 和 [平台能力表](docs/PLATFORM_CAPABILITIES.md)，其中旧版说明应结合本页与本版操作指南阅读。
 

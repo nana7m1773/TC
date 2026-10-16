@@ -37,3 +37,9 @@ test('an incomplete offline installation never silently downloads missing text, 
  const voice=new DesktopSpeechManager({directory:dir,bundledDirectory:path.join(dir,'missing'),manifest:{filename:'speech.bin'},tools});await assert.rejects(voice.installSpeech(),{code:'BUNDLED_MISSING'});
  }finally{await rm(dir,{recursive:true,force:true});}
 });
+test('the production offline installer command stays below the NSIS runtime string budget',async()=>{
+ const {offlinePlan,offlineCommand}=await import('../../../scripts/offline-model-plan.mjs');
+ const source=await readFile(new URL('../../../apps/desktop/install-preinstalled-models.ps1',import.meta.url),'utf8');
+ const encoded=offlineCommand(await offlinePlan(),source);
+ assert.ok(encoded.length<=7700);assert.ok(encoded.length+200<8192);
+});

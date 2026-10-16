@@ -1,9 +1,9 @@
 {
-  "verifiedAt": "2026-10-16T03:23:55.212Z",
+  "verifiedAt": "2026-10-16T03:34:24.931Z",
   "installer": {
     "path": "/workspace/TC/artifacts/windows/L-BOT-Setup-0.4.0-x64.exe",
-    "sizeBytes": 150881793,
-    "sha256": "bb0d96573835096460ebfb449a7f2ef269c8e84144ce13c90116b5974c82d471"
+    "sizeBytes": 150881240,
+    "sha256": "976b3f118539326c6698070854e9fa61bdeb5c921b90484e07cc4c5d9734275b"
   },
   "dependencies": {
     "electron": "44.7.0",
